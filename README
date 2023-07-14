@@ -1,0 +1,41 @@
+Updates
+
+1.  Created a server with user API endpoints, specifically has user routes, user model,
+    and user controller to add and retrieve user from mongoDB
+
+        In Postman,
+
+    Tests:
+
+        POST : localhost:3000/api/user/login
+
+        body : {
+            "email":"tmq.ronald.r@gmail.com",
+            "password":"12345"
+        }
+
+
+        POST : localhost:3000/api/user/register
+
+        body : {
+            "username":"Sample"
+            "email":"sample@gmail.com",
+            "password":"pass"
+        }
+
+    Error Handling Tests:
+
+        POST : localhost:3000/api/user/login
+
+            body : {
+                "email":"any@gmail.com",
+                "password":"12345"
+            }
+        POST : localhost:3000/api/user/register
+
+            body : {
+                "username":"a"
+                "email":"sample@gmail.com",
+                "password":"pass"
+            }
+        POST : localhost:3000/api/user/anyRoute
