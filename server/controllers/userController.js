@@ -26,13 +26,13 @@ module.exports.register = async (req, res, next) => {
 module.exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    const user = await UserModel.findOne({ email });
+    let user = await UserModel.findOne({ email });
 
     if (!user || !(await user.comparePassword(password)))
       return res.json({ msg: "Incorrect username or password", status: false });
 
     delete user.password;
-    return res.json({ status: true, user });
+    return res.json({ status: true, user: user });
   } catch (err) {
     //Error Handling passed to the frontend
     return res.json({ status: false, msg: err.message });

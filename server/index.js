@@ -31,9 +31,9 @@ mongoose
     console.log("MongoDb connected Successfully");
 
     //Start Listening when connected to mongoDB
-    app.listen(process.env.PORT || 3000, () => {
+    app.listen(process.env.PORT || 5000, () => {
       console.log(
-        `Server running on port ${process.env.PORT ? process.env.PORT : 3000}`
+        `Server running on port ${process.env.PORT ? process.env.PORT : 5000}`
       );
     });
   })

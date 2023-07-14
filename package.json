@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "cd server && nodemon index.js",
-    "dev": "cd scriptcast && npm install && cd .. && npm install && cd server && nodemon index.js",
+    "start": "cd server && node index.js",
+    "dev": "cd server && nodemon index.js",
+    "build": "",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
