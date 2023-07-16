@@ -39,3 +39,18 @@ Updates
                 "password":"pass"
             }
         POST : localhost:3000/api/user/anyRoute
+
+2.  Initial Setup of React, Redux, and Thunk
+
+        - Here I created the first setup of redux and handled the store for the user-information
+
+        - I also separated the side effects (using redux-thunks) when data is fetched from the server
+
+
+        Actions Created, with their corresponding reducers
+            1. REGISTER_USER
+            2. SET_CURRENT_USSER
+
+3.  UI was made and connect all the logic og login and register APIs,
+
+    - Here, I successfully created the login, and register pages
