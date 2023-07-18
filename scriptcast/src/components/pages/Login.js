@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { loginValidator } from "../../inputValidator/inputValidator";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import logo from "../../ScriptCastLogo.png";
+import logo from "../../images/ScriptCastLogo.png";
 function Login({ onLoginPressed, currentUser }) {
   const navigate = useNavigate();
   const [userCredetials, setUserCredentials] = useState({

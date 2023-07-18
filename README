@@ -54,3 +54,8 @@ Updates
 3.  UI was made and connect all the logic og login and register APIs,
 
     - Here, I successfully created the login, and register pages
+
+4.  Here the updates involve the initial dasboard page that can retrieve projects collection from the database,
+    Also the initial algorithm for words highlighting and its react component are added
+
+    - Additional actions are also added to redux-thunk
