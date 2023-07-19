@@ -30,7 +30,7 @@ function App({
   }, [currentUser]);
   useEffect(() => {
     if (!currentUser) return navigate("/login");
-    onFetchScript(currentUser._id, "64b62da93f00c7429d01f337");
+    onFetchScript(currentUser._id, "64b804b95b470b1e02093e7a");
   }, []);
   //Main Variables
   const isEditing = useRef(false);

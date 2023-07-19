@@ -25,10 +25,12 @@ export const user = (state = {}, action) => {
   switch (type) {
     case SET_CURRENT_USER: {
       const { user } = payload;
+      alert("Susccesfully Logged-in");
       return { ...state, user: user };
     }
     case REGISTER_USER: {
       const { user } = payload;
+      alert("Susccesfully Logged-in");
       return { ...state, user: user };
     }
     case CLEAR_CURRENT_USER: {
@@ -50,6 +52,20 @@ export const projects = (state = initProjects, action) => {
       const { projects } = payload;
       if (projects === null) return state;
       return projects;
+    }
+    case CREATE_PROJECT: {
+      const { project } = payload;
+      return [...state, project];
+    }
+    case DELETE_PROJECT: {
+      const { index } = payload;
+      return deleteArr(state, index);
+    }
+    case UPDATE_PROJECT: {
+      const { index, projectUpdate } = payload;
+      const dummyState = state;
+      dummyState[index] = { ...dummyState[index], ...projectUpdate };
+      return dummyState;
     }
 
     default: {

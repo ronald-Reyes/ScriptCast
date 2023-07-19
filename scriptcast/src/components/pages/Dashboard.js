@@ -1,16 +1,25 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { fetchAllProjectsThunk } from "../../thunk/thunk";
 import { clearCurrentUser } from "../../redux/actions";
 import { connect } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../../images/ScriptCastLogo.png";
-import styled from "styled-components";
-import moment from "moment";
+
+import RightSideDashboardPanel from "../partials/RightSideDashboardPanel";
+import LeftSideDashboardPanel from "../partials/LeftSideDashboardPanel";
+
 import { RiFilePaper2Line } from "react-icons/ri";
 import { CiLogout } from "react-icons/ci";
 import { TiUser } from "react-icons/ti";
 import { BiSearchAlt } from "react-icons/bi";
 import { VscDiffAdded } from "react-icons/vsc";
+import { IoOptionsOutline } from "react-icons/io5";
+import { GrAdd } from "react-icons/gr";
+import logo from "../../images/ScriptCastLogo.png";
+import styled from "styled-components";
+import moment from "moment";
+
+const CREATE_PROJECT = "CREATE PROJECT";
+const UPDATE_PROJECT = "UPDATE PROJECT";
 
 export function Dashboard({
   onFetchAllProjects,
@@ -20,6 +29,9 @@ export function Dashboard({
 }) {
   const projectElements = useRef([]);
   const navigate = useNavigate();
+  const rightPanel = useRef();
+  const clickedId = useRef();
+
   useEffect(() => {
     if (currentUser) onFetchAllProjects(currentUser._id);
   }, []);
@@ -27,8 +39,28 @@ export function Dashboard({
     if (!currentUser) navigate("/login");
   }, [currentUser]);
 
+  const initializeProjectCreatorPanel = (action) => {
+    document.querySelector("#titleText").innerHTML = action;
+    document.querySelector("#deleteProjectBtn").style.display = "block";
+    if (action === CREATE_PROJECT)
+      document.querySelector("#deleteProjectBtn").style.display = "none";
+  };
+  const fillProjectCreatorPanel = (
+    name = "",
+    category = "",
+    description = ""
+  ) => {
+    document.querySelector("#projectPanel-Name").value = name;
+    document.querySelector("#projectPanel-Category").value = category;
+    document.querySelector("#projectPanel-Description").value = description;
+  };
+
   return (
-    <>
+    <div
+      onClick={() => {
+        rightPanel.current.style.display = "none";
+      }}
+    >
       <StyledDasboard>
         <header className="Header">
           <div className="container">
@@ -49,9 +81,11 @@ export function Dashboard({
               <ul className="">
                 <li>
                   <a
-                    href="/login"
-                    onClick={() => {
+                    href="/#"
+                    onClick={(e) => {
+                      e.preventDefault();
                       onClearCurrentUser();
+                      navigate("/login");
                     }}
                   >
                     <CiLogout size={30} />
@@ -59,14 +93,14 @@ export function Dashboard({
                 </li>
                 <li className="menu-container">
                   <div className="UserIcon">
-                    <a>
+                    <div>
                       <TiUser size={30} />
-                    </a>
+                    </div>
                   </div>
                   <div className="menu">
-                    <a>Profile</a>
-                    <a>option2</a>
-                    <a>option3</a>
+                    <a href="/">Profile</a>
+                    <a href="/">option2</a>
+                    <a href="/">option3</a>
                   </div>
                 </li>
               </ul>
@@ -76,9 +110,10 @@ export function Dashboard({
         <section className="Dashboard">
           <section className="SidePanel">
             <StyledSidePanel>
-              <div></div>
+              <LeftSideDashboardPanel currentUser={currentUser} />
             </StyledSidePanel>
           </section>
+
           <section className="ProjectsSection">
             <StyledItemsContainer>
               <div className="mainContainer">
@@ -101,8 +136,20 @@ export function Dashboard({
                       <div>
                         <p>Date Modified</p>
                       </div>
-                      <div>
-                        <VscDiffAdded size={25} color="blue" />
+                      <div
+                        className="AddProjectBtn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          rightPanel.current.style.display = "block";
+                          initializeProjectCreatorPanel(CREATE_PROJECT);
+                          fillProjectCreatorPanel();
+                        }}
+                      >
+                        <VscDiffAdded
+                          size={25}
+                          color="blue"
+                          strokeWidth={0.01}
+                        />
                       </div>
                     </li>
                     {projects.map((project, i) => {
@@ -144,25 +191,62 @@ export function Dashboard({
                             </p>
                           </div>
                           <div>
-                            <select>
-                              <option></option>
-                              <option></option>
-                              <option></option>
-                              <option></option>
-                            </select>
+                            <div
+                              className="ProjectOptionsBtn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                rightPanel.current.style.display = "block";
+                                initializeProjectCreatorPanel(UPDATE_PROJECT);
+                                const { name, category, description } = project;
+                                fillProjectCreatorPanel(
+                                  name,
+                                  category,
+                                  description
+                                );
+                                clickedId.current = i;
+                              }}
+                            >
+                              <IoOptionsOutline size={20} />
+                            </div>
                           </div>
                         </li>
                       );
                     })}
                   </ul>
                 )}
-                <div className="itemsContainer"></div>
+                {projects.length === 0 && (
+                  <h3 class="EmptyProject">
+                    Create your first project{" "}
+                    <div
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        rightPanel.current.style.display = "block";
+                      }}
+                    >
+                      <GrAdd size={30} />
+                    </div>
+                  </h3>
+                )}
               </div>
             </StyledItemsContainer>
           </section>
+          <section
+            className="RightSidePanel"
+            ref={(el) => {
+              rightPanel.current = el;
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <RightSideDashboardPanel
+              clickedRef={clickedId}
+              panel={rightPanel}
+            />
+          </section>
         </section>
       </StyledDasboard>
-    </>
+    </div>
   );
 }
 
@@ -258,17 +342,29 @@ const StyledDasboard = styled.div`
   }
   .Dashboard {
     display: flex;
+    position: relative;
   }
   .ProjectsSection {
     flex-grow: 1;
   }
   .SidePanel {
   }
+  .RightSidePanel {
+    position: absolute;
+    width: 30%;
+    height: 100vh;
+    right: 0;
+    top: 0;
+    box-shadow: -3px 0px 7px 0px rgba(128, 128, 128, 0.4);
+    background: whitesmoke;
+    display: none;
+  }
 `;
 
 const StyledSidePanel = styled.div`
   height: 100vh;
   width: 15rem;
+  padding-top: 11.2px;
 `;
 
 const StyledItemsContainer = styled.div`
@@ -279,6 +375,20 @@ const StyledItemsContainer = styled.div`
     }
     background: whitesmoke;
     border-bottom: 1px solid skyblue;
+  }
+  .mainContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    .EmptyProject {
+      margin-top: 100px;
+      text-align: center;
+      color: gray;
+      div {
+        margin-top: 10px;
+        cursor: pointer;
+      }
+    }
   }
   ul {
     display: flex;

@@ -48,7 +48,7 @@ export const deleteProject = (index) => ({
   payload: { index },
 });
 export const updateProject = (index, projectUpdate) => ({
-  type: DELETE_PROJECT,
+  type: UPDATE_PROJECT,
   payload: { index, projectUpdate },
 });
 

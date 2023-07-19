@@ -59,3 +59,6 @@ Updates
     Also the initial algorithm for words highlighting and its react component are added
 
     - Additional actions are also added to redux-thunk
+
+5.  Here the updates include creating react component for dashboard page, with redux, and CRUD operations for
+    projects collection.

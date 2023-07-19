@@ -11,6 +11,7 @@ const scriptSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Projects",
       required: true,
+      unique: true,
     },
     title: {
       type: String,
