@@ -107,6 +107,7 @@ export const script = (state = initScript, action) => {
     case ADD_SCRIPT_LINE: {
       const { index, line = "Input new line here......" } = payload;
       const dummyState = { ...state };
+
       dummyState.lines = insertArr(
         state.lines,
         {
@@ -150,6 +151,9 @@ export const script = (state = initScript, action) => {
 };
 
 const insertArr = (array, object, index) => {
+  if (index === -1) {
+    return [object, ...array];
+  }
   let newArr = [];
   for (let i = 0; i < array.length; i++) {
     newArr.push(array[i]);
