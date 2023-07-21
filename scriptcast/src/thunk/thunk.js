@@ -154,29 +154,139 @@ export const fetchScriptThunk =
     }
   };
 
+//Script related actions
 export const updateScriptLineThunk =
-  (index, line) => async (dispatch, getState) => {
-    dispatch(updateScriptLine(index, line));
+  (_id, index, line) => async (dispatch, getState) => {
+    try {
+      const body = JSON.stringify({ _id, index, line });
+      const response = await fetch(
+        `http://localhost:5000/api/script/update-line`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "post",
+          body,
+        }
+      );
+      const res = await response.json();
+      if (res.status === true) {
+        dispatch(updateScriptLine(index, line));
+      }
+    } catch (e) {
+      dispatch();
+    }
   };
 export const updateCasterThunk =
-  (newCaster, index) => async (dispatch, getState) => {
-    dispatch(updateCaster(newCaster, index));
+  (_id, newCaster, index) => async (dispatch, getState) => {
+    try {
+      const body = JSON.stringify({ _id, index, caster: newCaster });
+      const response = await fetch(
+        `http://localhost:5000/api/script/update-caster`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "post",
+          body,
+        }
+      );
+      const res = await response.json();
+      if (res.status === true) {
+        dispatch(updateCaster(newCaster, index));
+      }
+    } catch (e) {
+      dispatch();
+    }
   };
 
 export const addScriptLineThunk =
-  (index, line) => async (dispatch, getState) => {
-    dispatch(addScriptLine(index));
+  (_id, index) => async (dispatch, getState) => {
+    try {
+      const body = JSON.stringify({ _id, index: index + 1 });
+      const response = await fetch(
+        `http://localhost:5000/api/script/add-line`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "post",
+          body,
+        }
+      );
+      const res = await response.json();
+      if (res.status === true) {
+        dispatch(addScriptLine(index));
+      }
+    } catch (e) {
+      dispatch();
+    }
   };
 
-export const deleteAllLinesThunk = () => async (dispatch, getState) => {
-  dispatch(deleteAllLines());
+export const deleteAllLinesThunk = (_id) => async (dispatch, getState) => {
+  try {
+    const body = JSON.stringify({ _id });
+    const response = await fetch(
+      `http://localhost:5000/api/script/delete-all`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "post",
+        body,
+      }
+    );
+    const res = await response.json();
+    if (res.status === true) {
+      dispatch(deleteAllLines());
+    }
+  } catch (e) {
+    dispatch();
+  }
 };
 
-export const deleteScriptLineThunk = (index) => async (dispatch, getState) => {
-  dispatch(deleteScriptLine(index));
-};
+export const deleteScriptLineThunk =
+  (_id, index) => async (dispatch, getState) => {
+    try {
+      const body = JSON.stringify({ _id, index });
+      const response = await fetch(
+        `http://localhost:5000/api/script/delete-line`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "post",
+          body,
+        }
+      );
+      const res = await response.json();
+      if (res.status === true) {
+        dispatch(deleteScriptLine(index));
+      }
+    } catch (e) {
+      dispatch();
+    }
+  };
 
 export const updateScriptTitleThunk =
-  (newTitle) => async (dispatch, getState) => {
-    dispatch(updateScriptTitle(newTitle));
+  (_id, newTitle) => async (dispatch, getState) => {
+    try {
+      const body = JSON.stringify({ _id, title: newTitle });
+      const response = await fetch(
+        `http://localhost:5000/api/script/update-title`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "post",
+          body,
+        }
+      );
+      const res = await response.json();
+      if (res.status === true) {
+        dispatch(updateScriptTitle(newTitle));
+      }
+    } catch (e) {
+      dispatch();
+    }
   };

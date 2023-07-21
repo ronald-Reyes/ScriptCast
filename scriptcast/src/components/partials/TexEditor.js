@@ -159,31 +159,31 @@ const TextEditor = forwardRef(
     //Successful thunks
     const handleUpdateCaster = (newCaster, index) => {
       stopPlayer();
-      onCasterUpdate(newCaster, index);
+      onCasterUpdate(script._id, newCaster, index);
     };
     const handleUpdateScriptLine = (i, line) => {
       stopPlayer();
-      onUpdateScriptLine(i, line);
-      //Rerenders page
-    };
-    const handleAddLineToLast = () => {
-      stopPlayer();
-      onAddScriptLine(script.lines.length + 1);
+      onUpdateScriptLine(script._id, i, line);
       //Rerenders page
     };
     const handleDeleteAllLines = () => {
       stopPlayer();
       count.current = 0;
-      onDeleteAllLines();
+      onDeleteAllLines(script._id);
     };
     const handleDeleteLine = (index) => {
       stopPlayer();
       count.current = 0;
-      onDeleteScriptLine(index);
+      onDeleteScriptLine(script._id, index);
+    };
+    const handleAddLineToLast = () => {
+      stopPlayer();
+      onAddScriptLine(script._id, script.lines.length);
+      //Rerenders page
     };
     const handeInsertLine = (index) => {
       stopPlayer();
-      onAddScriptLine(index - 1);
+      onAddScriptLine(script._id, index - 1);
     };
     return (
       <>
@@ -200,7 +200,7 @@ const TextEditor = forwardRef(
                     title.current = el;
                   }}
                   onBlur={() => {
-                    onUpdateScriptTitle(title.current.innerText);
+                    onUpdateScriptTitle(script._id, title.current.innerText);
                   }}
                 >
                   {script.title}
@@ -382,16 +382,18 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   onFetchScript: (userId, projectId) =>
     dispatch(fetchScriptThunk(userId, projectId)),
-  onCasterUpdate: (newCaster, index) =>
-    dispatch(updateCasterThunk(newCaster, index)),
-  onUpdateScriptLine: (index, line) =>
-    dispatch(updateScriptLineThunk(index, line)),
-  onAddScriptLine: (index) => {
-    dispatch(addScriptLineThunk(index));
+  onCasterUpdate: (_id, newCaster, index) =>
+    dispatch(updateCasterThunk(_id, newCaster, index)),
+  onUpdateScriptLine: (_id, index, line) =>
+    dispatch(updateScriptLineThunk(_id, index, line)),
+  onAddScriptLine: (_id, index) => {
+    dispatch(addScriptLineThunk(_id, index));
   },
-  onDeleteAllLines: () => dispatch(deleteAllLinesThunk()),
-  onDeleteScriptLine: (index) => dispatch(deleteScriptLineThunk(index)),
-  onUpdateScriptTitle: (newTitle) => dispatch(updateScriptTitleThunk(newTitle)),
+  onDeleteAllLines: (_id) => dispatch(deleteAllLinesThunk(_id)),
+  onDeleteScriptLine: (_id, index) =>
+    dispatch(deleteScriptLineThunk(_id, index)),
+  onUpdateScriptTitle: (_id, newTitle) =>
+    dispatch(updateScriptTitleThunk(_id, newTitle)),
 });
 export default connect(mapStateToProps, mapDispatchToProps, null, {
   forwardRef: true,

@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 import { updateScriptLineThunk } from "../../thunk/thunk";
 
 function STT({
+  script,
   SST,
   prevText,
   selected,
@@ -28,7 +29,11 @@ function STT({
   }, [transcript]);
   useEffect(() => {
     if (listening === false && selected.current) {
-      onUpdateScriptLine(selectedIndex.current, selected.current.innerText);
+      onUpdateScriptLine(
+        script._id,
+        selectedIndex.current,
+        selected.current.innerText
+      );
     }
   }, [listening]);
 
@@ -49,12 +54,14 @@ function STT({
     </StyledSpan>
   );
 }
-
-const mapDispatchToProps = (dispatch) => ({
-  onUpdateScriptLine: (index, line) =>
-    dispatch(updateScriptLineThunk(index, line)),
+const mapStateToProps = (state) => ({
+  script: state.script,
 });
-export default connect(null, mapDispatchToProps)(STT);
+const mapDispatchToProps = (dispatch) => ({
+  onUpdateScriptLine: (_id, index, line) =>
+    dispatch(updateScriptLineThunk(_id, index, line)),
+});
+export default connect(mapStateToProps, mapDispatchToProps)(STT);
 
 const StyledSpan = styled.span`
   span {

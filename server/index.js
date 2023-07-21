@@ -3,6 +3,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const userRoutes = require("./routes/userRoutes");
 const projectRoutes = require("./routes/projectRoute");
+const scriptRoutes = require("./routes/scriptRoutes");
 require("dotenv").config();
 
 const app = express();
@@ -11,6 +12,7 @@ app.use(express.json());
 
 app.use("/api/user", userRoutes);
 app.use("/api/project", projectRoutes);
+app.use("/api/script", scriptRoutes);
 
 //catch no matched route
 app.use((req, res, next) => {
