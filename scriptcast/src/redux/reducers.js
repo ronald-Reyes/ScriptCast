@@ -63,7 +63,7 @@ export const projects = (state = initProjects, action) => {
     }
     case UPDATE_PROJECT: {
       const { index, projectUpdate } = payload;
-      const dummyState = state;
+      const dummyState = [...state];
       dummyState[index] = { ...dummyState[index], ...projectUpdate };
       return dummyState;
     }
@@ -111,7 +111,7 @@ export const script = (state = initScript, action) => {
       dummyState.lines = insertArr(
         state.lines,
         {
-          caster: `Caster`,
+          caster: `- Caster`,
           line,
           marks: [],
         },

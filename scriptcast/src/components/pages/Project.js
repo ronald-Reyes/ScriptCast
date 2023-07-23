@@ -2,42 +2,49 @@ import React, { useRef } from "react";
 import TexEditor from "../partials/TexEditor";
 import styled from "styled-components";
 import Header from "../partials/header";
+import Player from "../player/Player";
+import TTS from "../player/TTS";
 
 export const PROJECT_PAGE = "PROJECT_PAGE";
 
 export default function Project() {
-  const textEditor = useRef();
+  const textEditorRef = useRef();
+  const playerRef = useRef();
   const wordCounter = useRef(0);
+  const Panels = useRef([]);
+
+  const TTSRef = useRef();
   return (
-    <div>
-      <Header type={PROJECT_PAGE} />
+    <div
+      onClick={() => {
+        Panels.current[0].style.display = "none";
+      }}
+    >
+      <Header type={PROJECT_PAGE} Panels={Panels} />
+      <TTSStyledContainer
+        ref={(el) => {
+          Panels.current[0] = el;
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
+        <TTS ref={TTSRef} />
+      </TTSStyledContainer>
       <TextEditorStyledContainer>
-        <TexEditor ref={textEditor} wordCounter={wordCounter} />
+        <TexEditor
+          ref={textEditorRef}
+          wordCounter={wordCounter}
+          playerRef={playerRef}
+          TTSRef={TTSRef}
+        />
       </TextEditorStyledContainer>
       <PlayerControlStyledContainer>
-        <div className="PlayerUI">
-          <button
-            onClick={() => {
-              textEditor.current.stopPlayer();
-            }}
-          >
-            Stop
-          </button>
-          <button
-            onClick={() => {
-              textEditor.current.handlePlayBtn(0, 500);
-            }}
-          >
-            start
-          </button>
-          <button
-            onClick={() => {
-              textEditor.current.handlePlayBtn(wordCounter.current, 500);
-            }}
-          >
-            continue
-          </button>
-        </div>
+        <Player
+          ref={playerRef}
+          wordCounter={wordCounter}
+          textEditorRef={textEditorRef}
+        />
       </PlayerControlStyledContainer>
     </div>
   );
@@ -53,4 +60,11 @@ const PlayerControlStyledContainer = styled.div`
 
 const TextEditorStyledContainer = styled.div`
   width: 500px;
+`;
+
+const TTSStyledContainer = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  display: none;
 `;

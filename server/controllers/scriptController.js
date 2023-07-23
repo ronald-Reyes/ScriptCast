@@ -81,7 +81,7 @@ module.exports.addLine = async (req, res, next) => {
             $position: index,
             $each: [
               {
-                caster: `Caster`,
+                caster: `- Caster`,
                 line: "Input new line here......",
                 marks: [],
               },
@@ -121,6 +121,19 @@ module.exports.deleteLine = async (req, res, next) => {
       ]
     );
     if (updatedScript) return res.json({ status: true, updatedScript });
+  } catch (err) {
+    //Error Handling passed to the frontend
+    return res.json({ status: false, msg: err.message });
+  }
+};
+module.exports.deleteScript = async (req, res, next) => {
+  try {
+    const { projectId } = req.body;
+
+    const deletedScript = await ScriptModel.deleteOne({
+      projectId,
+    });
+    if (deletedScript) return res.json({ status: true, deletedScript });
   } catch (err) {
     //Error Handling passed to the frontend
     return res.json({ status: false, msg: err.message });

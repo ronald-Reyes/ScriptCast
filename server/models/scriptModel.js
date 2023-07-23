@@ -21,8 +21,8 @@ const scriptSchema = new mongoose.Schema(
       type: Array,
       default: [
         {
-          caster: "Caster 0",
-          line: "The quick brown fox jumps over the lazy dog",
+          caster: "- Caster 0",
+          line: "You can type your script here or speak while the mic is listening. Hover over and click the speech recognition icon to start listening. Then click the start button to play. Enjoy!!!",
           marks: [],
         },
       ],

@@ -4,17 +4,6 @@ import React, {
   useImperativeHandle,
   forwardRef,
 } from "react";
-import { connect } from "react-redux";
-import styled from "styled-components";
-import { useNavigate, useParams } from "react-router-dom";
-import { BiFileBlank } from "react-icons/bi";
-import { IoIosRemoveCircleOutline } from "react-icons/io";
-import { IoIosAddCircle } from "react-icons/io";
-import { SlPencil } from "react-icons/sl";
-import { BsMicMute } from "react-icons/bs";
-
-import STT from "./STT";
-
 import {
   updateScriptLineThunk,
   updateCasterThunk,
@@ -24,6 +13,16 @@ import {
   updateScriptTitleThunk,
   fetchScriptThunk,
 } from "../../thunk/thunk";
+import { connect } from "react-redux";
+import STT from "../player/STT";
+import styled from "styled-components";
+import { useNavigate, useParams } from "react-router-dom";
+import { BiFileBlank } from "react-icons/bi";
+import { IoIosRemoveCircleOutline } from "react-icons/io";
+import { IoIosAddCircle } from "react-icons/io";
+import { SlPencil } from "react-icons/sl";
+import { BsMicMute } from "react-icons/bs";
+import { RiSpeakLine } from "react-icons/ri";
 
 const TextEditor = forwardRef(
   (
@@ -38,12 +37,23 @@ const TextEditor = forwardRef(
       currentUser,
       onFetchScript,
       wordCounter,
+      playerRef,
+      TTSRef,
     },
     ref
   ) => {
     const navigate = useNavigate();
     const params = useParams();
     const lineBtns = useRef([]);
+    const lineElements = useRef([]);
+    const casterElements = useRef([]);
+    const spanTextElements = useRef({});
+    const title = useRef();
+
+    const isEditing = useRef(false);
+    const Layers = useRef([]);
+    const count = wordCounter;
+
     const SST = useRef();
     const isListening = useRef();
     const selectedLineElement = useRef();
@@ -57,64 +67,13 @@ const TextEditor = forwardRef(
       onFetchScript(currentUser._id, projectId);
     }, []);
 
-    const count = wordCounter;
     useImperativeHandle(ref, () => ({
-      stopPlayer() {
-        clearInterval(myInterval);
-        isPlaying = false;
-        showLayer2();
-        console.log(`Last Count: ${count.current}`);
-      },
-      handlePlayBtn(startCount, time = 500) {
-        stopPlayer();
-        isPlaying = true;
-        removeAllMarks();
-        removeCurrentHighLight();
-        showLayer1();
-
-        const layer1WordElements = document.querySelectorAll(
-          ".scriptContainer .textElement.Layer1"
-        );
-        const totalWords = layer1WordElements.length;
-        count.current = startCount;
-        //Player has started from 0
-
-        myInterval = setInterval(() => {
-          layer1WordElements[count.current].classList.add("blueHighlight");
-          if (count.current !== 0)
-            layer1WordElements[count.current - 1].classList.remove(
-              "blueHighlight"
-            );
-          count.current++;
-          if (count.current >= totalWords) {
-            removeCurrentHighLight();
-            stopPlayer();
-            count.current = 0;
-          }
-        }, time);
-      },
+      removeAllMarks,
+      removeCurrentHighLight,
+      showLayer2,
+      showLayer1,
     }));
-    //Main Variables
-    const isEditing = useRef(false);
-    const lineElements = useRef([]);
-    const casterElements = useRef([]);
-    const spanTextElements = useRef({});
-    const title = useRef();
 
-    //helper variables
-
-    let myInterval;
-    let isPlaying = false;
-    const Layers = useRef([]);
-
-    //Player Button Functions
-    const stopPlayer = () => {
-      clearInterval(myInterval);
-      isPlaying = false;
-      showLayer2();
-      console.log(`Last Count: ${count.current}`);
-    };
-    //
     const WordsSeparator = ({ type, line = "", index }) => {
       const wordsArr = line.split(" ");
       return (
@@ -156,33 +115,26 @@ const TextEditor = forwardRef(
       Layers.current[0].classList.add("hide");
       Layers.current[1].classList.remove("hide");
     };
-    //Successful thunks
+
     const handleUpdateCaster = (newCaster, index) => {
-      stopPlayer();
       onCasterUpdate(script._id, newCaster, index);
     };
     const handleUpdateScriptLine = (i, line) => {
-      stopPlayer();
       onUpdateScriptLine(script._id, i, line);
-      //Rerenders page
     };
     const handleDeleteAllLines = () => {
-      stopPlayer();
+      playerRef.current.stopPlayer();
       count.current = 0;
       onDeleteAllLines(script._id);
     };
     const handleDeleteLine = (index) => {
-      stopPlayer();
       count.current = 0;
       onDeleteScriptLine(script._id, index);
     };
     const handleAddLineToLast = () => {
-      stopPlayer();
       onAddScriptLine(script._id, script.lines.length);
-      //Rerenders page
     };
     const handeInsertLine = (index) => {
-      stopPlayer();
       onAddScriptLine(script._id, index - 1);
     };
     return (
@@ -254,6 +206,10 @@ const TextEditor = forwardRef(
                   <div
                     key={i}
                     className="lineContainer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      TTSRef.current.setText(lineElements.current[i].innerText);
+                    }}
                     onMouseOver={() => {
                       lineBtns.current[i].style.display = "block";
                     }}
@@ -270,17 +226,19 @@ const TextEditor = forwardRef(
                         suppressContentEditableWarning={true}
                         onFocus={() => {
                           isEditing.current = true;
-                          showLayer1();
-                          stopPlayer();
+                          showLayer2();
+                          playerRef.current.stopPlayer();
+                          count.current = 0;
                         }}
                         onBlur={() => {
                           isEditing.current = false;
-
-                          showLayer1();
+                          showLayer2();
                           handleUpdateCaster(
                             casterElements.current[i].innerText,
                             i
                           );
+                          playerRef.current.stopPlayer();
+                          count.current = 0;
                         }}
                       >
                         {item.caster}
@@ -304,7 +262,7 @@ const TextEditor = forwardRef(
                               lineElements.current[i];
                           }}
                         >
-                          <BsMicMute size={20} color="black" />
+                          <RiSpeakLine size={20} color="black" />
                         </button>
                         <button
                           className="insertLineBtn"
@@ -339,13 +297,13 @@ const TextEditor = forwardRef(
                       ref={(el) => (lineElements.current[i] = el)}
                       onFocus={() => {
                         isEditing.current = true;
-                        showLayer1();
+                        showLayer2();
 
-                        stopPlayer();
+                        playerRef.current.stopPlayer();
                       }}
                       onBlur={() => {
                         isEditing.current = false;
-                        showLayer1();
+                        showLayer2();
 
                         handleUpdateScriptLine(
                           i,
@@ -452,6 +410,9 @@ const StyleContainer = styled.div`
   }
   .lineContainer {
     margin-bottom: 20px;
+    &:hover {
+      border: 0.5px solid blue;
+    }
   }
   .lineBtnsContainer {
     display: none;

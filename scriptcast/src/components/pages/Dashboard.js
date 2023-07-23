@@ -176,6 +176,8 @@ export function Dashboard({
                         onClick={(e) => {
                           e.stopPropagation();
                           rightPanel.current.style.display = "block";
+                          initializeProjectCreatorPanel(CREATE_PROJECT);
+                          fillProjectCreatorPanel();
                         }}
                       >
                         <GrAdd size={30} />

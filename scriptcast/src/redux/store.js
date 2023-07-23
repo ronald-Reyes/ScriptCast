@@ -1,5 +1,5 @@
 import { createStore, applyMiddleware, combineReducers } from "redux";
-import { user, script, projects } from "./reducers";
+import { user, script, projects, audioFiles } from "./reducers";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import autoMergeLevel2 from "redux-persist/es/stateReconciler/autoMergeLevel2";
@@ -10,6 +10,7 @@ const reducers = {
   script,
   user,
   projects,
+  audioFiles,
 };
 const persistConfig = {
   key: "root",

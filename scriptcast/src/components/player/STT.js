@@ -5,6 +5,8 @@ import SpeechRecognition, {
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { updateScriptLineThunk } from "../../thunk/thunk";
+import { BiMicrophoneOff } from "react-icons/bi";
+import { BiSolidMicrophone } from "react-icons/bi";
 
 function STT({
   script,
@@ -21,6 +23,8 @@ function STT({
     resetTranscript,
     browserSupportsSpeechRecognition,
   } = useSpeechRecognition();
+  SST.current = SpeechRecognition;
+
   useEffect(() => {
     if (selected.current) {
       selected.current.firstChild.innerText =
@@ -37,8 +41,6 @@ function STT({
     }
   }, [listening]);
 
-  SST.current = SpeechRecognition;
-
   isListening.current = listening;
   if (!browserSupportsSpeechRecognition) {
     return <span>Does not support STT...</span>;
@@ -47,9 +49,15 @@ function STT({
   return (
     <StyledSpan>
       {listening ? (
-        <span className="listening">Listening...</span>
+        <span className="listening">
+          Listening...
+          <BiSolidMicrophone size={20} />
+        </span>
       ) : (
-        <span>Not Listening...</span>
+        <span>
+          Not Listening...
+          <BiMicrophoneOff size={20} />
+        </span>
       )}
     </StyledSpan>
   );

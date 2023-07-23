@@ -7,11 +7,14 @@ import { CiLogout } from "react-icons/ci";
 import { TiUser } from "react-icons/ti";
 import { BiSearchAlt } from "react-icons/bi";
 import { SlHome } from "react-icons/sl";
+import { TbSpeakerphone } from "react-icons/tb";
+import { PiRecordFill } from "react-icons/pi";
+import { RiFolderUploadLine } from "react-icons/ri";
 import styled from "styled-components";
 import { DASHBOARD_PAGE } from "../pages/Dashboard";
 import { PROJECT_PAGE } from "../pages/Dashboard";
 
-function Header({ onClearCurrentUser, type }) {
+function Header({ onClearCurrentUser, type, Panels }) {
   const navigate = useNavigate();
   return (
     <StyledContainer>
@@ -30,6 +33,34 @@ function Header({ onClearCurrentUser, type }) {
               <button>
                 <BiSearchAlt size={25} />
               </button>
+            </div>
+          )}
+          {type !== DASHBOARD_PAGE && (
+            <div className="recorderOptions">
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  Panels.current[0].style.display = "flex";
+                }}
+              >
+                <TbSpeakerphone size={22} />
+              </div>
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  Panels.current[0].style.display = "flex";
+                }}
+              >
+                <PiRecordFill size={22} />
+              </div>
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  Panels.current[0].style.display = "flex";
+                }}
+              >
+                <RiFolderUploadLine size={22} />
+              </div>
             </div>
           )}
           <nav>
@@ -165,5 +196,10 @@ const StyledContainer = styled.div`
         }
       }
     }
+  }
+  .recorderOptions {
+    display: flex;
+    gap: 1rem;
+    cursor: pointer;
   }
 `;

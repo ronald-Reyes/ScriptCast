@@ -107,6 +107,16 @@ export const deleteProjectThunk =
         body,
       });
       const res = await response.json();
+      //delet also the script attached to this project
+      const body2 = JSON.stringify({ projectId: _id });
+      await fetch(`http://localhost:5000/api/script/delete-script`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "post",
+        body: body2,
+      });
+
       if (res.status === true) dispatch(deleteProject(index));
     } catch (e) {
       dispatch();
