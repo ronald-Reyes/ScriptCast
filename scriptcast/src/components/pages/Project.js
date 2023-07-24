@@ -4,6 +4,7 @@ import styled from "styled-components";
 import Header from "../partials/header";
 import Player from "../player/Player";
 import TTS from "../player/TTS";
+import UploadFolder from "../partials/UploadFolder";
 
 export const PROJECT_PAGE = "PROJECT_PAGE";
 
@@ -18,6 +19,7 @@ export default function Project() {
     <div
       onClick={() => {
         Panels.current[0].style.display = "none";
+        Panels.current[2].style.display = "none";
       }}
     >
       <Header type={PROJECT_PAGE} Panels={Panels} />
@@ -31,6 +33,16 @@ export default function Project() {
       >
         <TTS ref={TTSRef} />
       </TTSStyledContainer>
+      <UploaderStyledContainer
+        ref={(el) => {
+          Panels.current[2] = el;
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
+        <UploadFolder />
+      </UploaderStyledContainer>
       <TextEditorStyledContainer>
         <TexEditor
           ref={textEditorRef}
@@ -63,6 +75,13 @@ const TextEditorStyledContainer = styled.div`
 `;
 
 const TTSStyledContainer = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  display: none;
+`;
+
+const UploaderStyledContainer = styled.div`
   position: relative;
   display: flex;
   justify-content: center;

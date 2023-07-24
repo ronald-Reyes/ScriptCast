@@ -19,6 +19,11 @@ export const DELETE_ALL_MARKED = "DELETE_ALL_MARKED_LINE";
 export const UPDATE_CASTER = "UPDATE_CASTER";
 export const UPDATE_SCRIPT_TITLE = "UPDATE_SCRIPT_TITLE";
 
+export const FETCH_ALL_AUDIO = "FETCH_ALL_AUDIO";
+export const UPLOAD_AUDIO = "UPLOAD_AUDIO";
+export const REMOVE_AUDIO = "REMOVE_AUDIO";
+export const SET_AUDIO_INCLUDED = "SET_AUDIO_INCLUDED";
+
 //action creators
 export const setCurrentUser = (user) => ({
   type: SET_CURRENT_USER,
@@ -95,4 +100,21 @@ export const updateCaster = (newCaster, index) => ({
 export const updateScriptTitle = (newTitle) => ({
   type: UPDATE_SCRIPT_TITLE,
   payload: { newTitle },
+});
+
+export const fetchAllAudio = (audioArray) => ({
+  type: FETCH_ALL_AUDIO,
+  payload: { audioArray },
+});
+export const uploadAudio = (audio) => ({
+  type: UPLOAD_AUDIO,
+  payload: { audio },
+});
+export const deleteAudio = (index) => ({
+  type: REMOVE_AUDIO,
+  payload: { index },
+});
+export const setAudioIncluded = (index, include) => ({
+  type: SET_AUDIO_INCLUDED,
+  payload: { index, include },
 });

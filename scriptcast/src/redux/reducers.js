@@ -17,6 +17,10 @@ import {
   FETCH_ALL_PROJECTS,
   SET_CURRENT_PROJECT,
   CLEAR_CURRENT_USER,
+  UPLOAD_AUDIO,
+  REMOVE_AUDIO,
+  SET_AUDIO_INCLUDED,
+  FETCH_ALL_AUDIO,
 } from "./actions";
 
 export const user = (state = {}, action) => {
@@ -170,4 +174,36 @@ const deleteArr = (array, index) => {
   }
   newArr = [...newArr, ...array.slice(index + 1, array.length)];
   return newArr;
+};
+
+const initAudioArray = [];
+export const audioArray = (state = initAudioArray, action) => {
+  const { type, payload } = action;
+
+  switch (type) {
+    case FETCH_ALL_AUDIO: {
+      const { audioArray } = payload;
+      if (audioArray === null) return state;
+      console.log(audioArray);
+      return audioArray;
+    }
+    case UPLOAD_AUDIO: {
+      const { audio } = payload;
+      return [...state, audio];
+    }
+    case REMOVE_AUDIO: {
+      const { index } = payload;
+      return deleteArr(state, index);
+    }
+    case SET_AUDIO_INCLUDED: {
+      const { index, include } = payload;
+      const dummyState = [...state];
+      dummyState[index] = { ...dummyState[index], include };
+      return dummyState;
+    }
+
+    default: {
+      return state;
+    }
+  }
 };

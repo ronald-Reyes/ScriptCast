@@ -4,15 +4,22 @@ const mongoose = require("mongoose");
 const userRoutes = require("./routes/userRoutes");
 const projectRoutes = require("./routes/projectRoute");
 const scriptRoutes = require("./routes/scriptRoutes");
+const audioRoutes = require("./routes/audioRoutes");
+const multer = require("multer");
 require("dotenv").config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+const upload = multer({
+  limits: { fieldSize: 25 * 1024 * 1024 },
+});
+app.use(upload.array());
 
 app.use("/api/user", userRoutes);
 app.use("/api/project", projectRoutes);
 app.use("/api/script", scriptRoutes);
+app.use("/api/audio", audioRoutes);
 
 //catch no matched route
 app.use((req, res, next) => {

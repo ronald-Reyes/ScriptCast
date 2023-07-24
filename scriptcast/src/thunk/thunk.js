@@ -13,6 +13,9 @@ import {
   createProject,
   deleteProject,
   updateProject,
+  uploadAudio,
+  fetchAllAudio,
+  deleteAudio,
 } from "../redux/actions";
 
 export const setUser = (email, password) => async (dispatch, getState) => {
@@ -300,3 +303,75 @@ export const updateScriptTitleThunk =
       dispatch();
     }
   };
+
+//Audio Thunks
+
+async function audioToBase64(e) {
+  return new Promise((resolve, reject) => {
+    let reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = (e) => resolve(e.target.result);
+    reader.readAsDataURL(e.target.files[0]);
+  });
+}
+export const uploadAudioThunk =
+  (projectId, name, file) => async (dispatch, getState) => {
+    try {
+      const bin64 = await audioToBase64(file);
+      const formData = new FormData();
+      formData.append("bin64", bin64);
+      formData.append("projectId", projectId);
+      formData.append("name", name);
+      console.log("HI");
+      const response = await fetch(`http://localhost:5000/api/audio/upload`, {
+        method: "post",
+        body: formData,
+      });
+      const res = await response.json();
+      if (res.status === true) {
+        dispatch(uploadAudio(res.audioCreated));
+      }
+    } catch (e) {
+      dispatch();
+    }
+  };
+
+export const fetchAllAudioThunk = (projectId) => async (dispatch, getState) => {
+  try {
+    const body = JSON.stringify({ projectId });
+    const response = await fetch(`http://localhost:5000/api/audio/getAll`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body,
+    });
+    const res = await response.json();
+    if (res.status === true) {
+      alert("Successfully fetched from database.");
+      dispatch(fetchAllAudio(res.audioArray));
+    }
+  } catch (e) {
+    dispatch();
+  }
+};
+
+export const deleteAudioThunk = (_id, index) => async (dispatch, getState) => {
+  try {
+    const body = JSON.stringify({ _id });
+    const response = await fetch(`http://localhost:5000/api/audio/remove`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body,
+    });
+    const res = await response.json();
+    if (res.status === true) {
+      alert("Successfully deleted from database.");
+      dispatch(deleteAudio(index));
+    }
+  } catch (e) {
+    dispatch();
+  }
+};
