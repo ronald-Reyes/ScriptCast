@@ -322,13 +322,14 @@ export const uploadAudioThunk =
       formData.append("bin64", bin64);
       formData.append("projectId", projectId);
       formData.append("name", name);
-      console.log("HI");
+
       const response = await fetch(`http://localhost:5000/api/audio/upload`, {
         method: "post",
         body: formData,
       });
       const res = await response.json();
       if (res.status === true) {
+        alert("Successfully added to database.");
         dispatch(uploadAudio(res.audioCreated));
       }
     } catch (e) {
@@ -336,6 +337,37 @@ export const uploadAudioThunk =
     }
   };
 
+const blobToBase64 = (blob) => {
+  const reader = new FileReader();
+  reader.readAsDataURL(blob);
+  return new Promise((resolve) => {
+    reader.onloadend = () => {
+      resolve(reader.result);
+    };
+  });
+};
+export const uploadRecordedThunk =
+  (projectId, name, file) => async (dispatch, getState) => {
+    try {
+      const bin64 = await blobToBase64(file);
+      const formData = new FormData();
+      formData.append("bin64", bin64);
+      formData.append("projectId", projectId);
+      formData.append("name", name);
+
+      const response = await fetch(`http://localhost:5000/api/audio/upload`, {
+        method: "post",
+        body: formData,
+      });
+      const res = await response.json();
+      if (res.status === true) {
+        alert("Successfully added to database.");
+        dispatch(uploadAudio(res.audioCreated));
+      }
+    } catch (e) {
+      dispatch();
+    }
+  };
 export const fetchAllAudioThunk = (projectId) => async (dispatch, getState) => {
   try {
     const body = JSON.stringify({ projectId });

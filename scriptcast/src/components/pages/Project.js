@@ -5,6 +5,7 @@ import Header from "../partials/header";
 import Player from "../player/Player";
 import TTS from "../player/TTS";
 import UploadFolder from "../partials/UploadFolder";
+import AudioRecorderPanel from "../player/AudioRecorder";
 
 export const PROJECT_PAGE = "PROJECT_PAGE";
 
@@ -19,6 +20,7 @@ export default function Project() {
     <div
       onClick={() => {
         Panels.current[0].style.display = "none";
+        Panels.current[1].style.display = "none";
         Panels.current[2].style.display = "none";
       }}
     >
@@ -33,6 +35,16 @@ export default function Project() {
       >
         <TTS ref={TTSRef} />
       </TTSStyledContainer>
+      <RecorderStyledContainer
+        ref={(el) => {
+          Panels.current[1] = el;
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
+        <AudioRecorderPanel />
+      </RecorderStyledContainer>
       <UploaderStyledContainer
         ref={(el) => {
           Panels.current[2] = el;
@@ -82,6 +94,12 @@ const TTSStyledContainer = styled.div`
 `;
 
 const UploaderStyledContainer = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  display: none;
+`;
+const RecorderStyledContainer = styled.div`
   position: relative;
   display: flex;
   justify-content: center;

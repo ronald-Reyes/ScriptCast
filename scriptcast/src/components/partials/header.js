@@ -41,6 +41,7 @@ function Header({ onClearCurrentUser, type, Panels }) {
                 onClick={(e) => {
                   e.stopPropagation();
                   Panels.current[0].style.display = "flex";
+                  Panels.current[1].style.display = "none";
                   Panels.current[2].style.display = "none";
                 }}
               >
@@ -49,6 +50,9 @@ function Header({ onClearCurrentUser, type, Panels }) {
               <div
                 onClick={(e) => {
                   e.stopPropagation();
+                  Panels.current[0].style.display = "none";
+                  Panels.current[1].style.display = "flex";
+                  Panels.current[2].style.display = "none";
                 }}
               >
                 <PiRecordFill size={22} />
@@ -58,6 +62,7 @@ function Header({ onClearCurrentUser, type, Panels }) {
                   e.stopPropagation();
                   Panels.current[2].style.display = "flex";
                   Panels.current[0].style.display = "none";
+                  Panels.current[1].style.display = "none";
                 }}
               >
                 <RiFolderUploadLine size={22} />

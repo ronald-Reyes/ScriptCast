@@ -6,6 +6,7 @@ let a;
 const AudioUploader = ({ audioFiles, setAudioFiles, onUploadClicked }) => {
   const [buttonName, setButtonName] = useState("Play");
   const event = useRef();
+  const refElement = useRef();
   const params = useParams();
   const [audio, setAudio] = useState({});
 
@@ -52,11 +53,18 @@ const AudioUploader = ({ audioFiles, setAudioFiles, onUploadClicked }) => {
   };
 
   const handleUpload = () => {
-    onUploadClicked(
-      params.projectId,
-      event.current.target.files[0].name,
-      event.current
-    );
+    if (event.current) {
+      onUploadClicked(
+        params.projectId,
+        event.current.target.files[0].name,
+        event.current
+      );
+      refElement.current.value = null;
+      event.current = null;
+
+      return;
+    }
+    alert("Choose A File First");
     // const dummyFiles = audioFiles;
     // dummyFiles.push(audio);
     // setAudioFiles([...dummyFiles]);
@@ -67,6 +75,7 @@ const AudioUploader = ({ audioFiles, setAudioFiles, onUploadClicked }) => {
       <button onClick={handleUpload}>Upload</button>
       <button onClick={handleClick}>{buttonName}</button>
       <input
+        ref={refElement}
         type="file"
         onChange={addFile}
         onInput={(e) => {
