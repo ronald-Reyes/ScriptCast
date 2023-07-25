@@ -6,102 +6,191 @@ import Player from "../player/Player";
 import TTS from "../player/TTS";
 import UploadFolder from "../partials/UploadFolder";
 import AudioRecorderPanel from "../player/AudioRecorder";
+import VideoPreview from "../player/VideoPreview";
 
 export const PROJECT_PAGE = "PROJECT_PAGE";
+
+let x = 0;
+let y = 0;
+let textEditorWidth = 0;
+let textEditorElem = null;
+let bottomPanelHeight = 0;
+let bottomPanelElem = null;
 
 export default function Project() {
   const textEditorRef = useRef();
   const playerRef = useRef();
   const wordCounter = useRef(0);
   const Panels = useRef([]);
-
   const TTSRef = useRef();
+
+  //needed for resize
+  const resizer = useRef();
+
+  const Resizer = ({ type }) => {
+    return (
+      <div
+        className={`resizer ${type}`}
+        direction={type}
+        ref={resizer}
+        onClick={() => {}}
+        onMouseDown={(e) => {
+          if (type === "horizontal") {
+            resizer.current = e.target;
+            textEditorElem = resizer.current.previousElementSibling;
+            x = e.clientX;
+            textEditorWidth = textEditorElem.getBoundingClientRect().width;
+          } else if (type === "vertical") {
+            resizer.current = e.target;
+            y = e.clientY;
+            bottomPanelHeight =
+              resizer.current.parentNode.getBoundingClientRect().height;
+            bottomPanelElem = resizer.current.parentNode;
+          }
+        }}
+      ></div>
+    );
+  };
   return (
-    <div
+    <MainContainer
       onClick={() => {
         Panels.current[0].style.display = "none";
         Panels.current[1].style.display = "none";
         Panels.current[2].style.display = "none";
       }}
+      onMouseMove={(e) => {
+        const dx = e.clientX - x;
+        const dy = e.clientY - y;
+        switch (resizer.current.getAttribute("direction")) {
+          case "vertical":
+            const h =
+              ((bottomPanelHeight - dy) * 100) /
+              resizer.current.parentNode.parentNode.getBoundingClientRect()
+                .height;
+            if (bottomPanelElem)
+              resizer.current.parentNode.style.height = `${h}%`;
+            break;
+          case "horizontal":
+          default:
+            const newLeftWidth =
+              ((textEditorWidth + dx) * 100) /
+              resizer.current.parentNode.getBoundingClientRect().width;
+            if (textEditorElem) textEditorElem.style.width = `${newLeftWidth}%`;
+            break;
+        }
+      }}
+      onMouseUp={(e) => {
+        textEditorElem = null;
+        bottomPanelElem = null;
+      }}
     >
-      <Header type={PROJECT_PAGE} Panels={Panels} />
-      <TTSStyledContainer
-        ref={(el) => {
-          Panels.current[0] = el;
-        }}
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-      >
-        <TTS ref={TTSRef} />
-      </TTSStyledContainer>
-      <RecorderStyledContainer
-        ref={(el) => {
-          Panels.current[1] = el;
-        }}
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-      >
-        <AudioRecorderPanel />
-      </RecorderStyledContainer>
-      <UploaderStyledContainer
-        ref={(el) => {
-          Panels.current[2] = el;
-        }}
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-      >
-        <UploadFolder />
-      </UploaderStyledContainer>
-      <TextEditorStyledContainer>
-        <TexEditor
-          ref={textEditorRef}
-          wordCounter={wordCounter}
-          playerRef={playerRef}
-          TTSRef={TTSRef}
-        />
-      </TextEditorStyledContainer>
-      <PlayerControlStyledContainer>
+      <div className="TopSection">
+        <Header type={PROJECT_PAGE} Panels={Panels} />
+        <div
+          className="panel TTSContainer"
+          ref={(el) => {
+            Panels.current[0] = el;
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
+          <TTS ref={TTSRef} />
+        </div>
+        <div
+          className="panel RecorderContainer"
+          ref={(el) => {
+            Panels.current[1] = el;
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
+          <AudioRecorderPanel />
+        </div>
+        <div
+          className="panel UploaderContainer"
+          ref={(el) => {
+            Panels.current[2] = el;
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
+          <UploadFolder />
+        </div>
+      </div>
+      <div className="MainSection">
+        <div className="TextEditor">
+          <TexEditor
+            ref={textEditorRef}
+            wordCounter={wordCounter}
+            playerRef={playerRef}
+            TTSRef={TTSRef}
+          />
+        </div>
+        <Resizer type="horizontal" />
+        <div className="VidePreViewContainer">
+          <VideoPreview />
+        </div>
+      </div>
+      <div className="BottomSection">
+        <Resizer type="vertical" />
         <Player
           ref={playerRef}
           wordCounter={wordCounter}
           textEditorRef={textEditorRef}
         />
-      </PlayerControlStyledContainer>
-    </div>
+      </div>
+    </MainContainer>
   );
 }
+const MainContainer = styled.div`
+  height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  .TopSection {
+    .panel {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      display: none;
+    }
+  }
+  .MainSection {
+    position: relative;
+    display: flex;
 
-const PlayerControlStyledContainer = styled.div`
-  .PlayerUI {
+    .TextEditor {
+      width: 50%;
+      resize: horizontal;
+    }
+    .VidePreViewContainer {
+      flex-grow: 1;
+      background: grey;
+    }
+  }
+  .BottomSection {
     position: fixed;
     bottom: 0;
     left: 0;
+    width: 100%;
+    height: 20%;
+    background: white;
+    border: 1px solid grey;
   }
-`;
-
-const TextEditorStyledContainer = styled.div`
-  width: 500px;
-`;
-
-const TTSStyledContainer = styled.div`
-  position: relative;
-  display: flex;
-  justify-content: center;
-  display: none;
-`;
-
-const UploaderStyledContainer = styled.div`
-  position: relative;
-  display: flex;
-  justify-content: center;
-  display: none;
-`;
-const RecorderStyledContainer = styled.div`
-  position: relative;
-  display: flex;
-  justify-content: center;
-  display: none;
+  .resizer.horizontal {
+    width: 5px;
+    height: 100%;
+    &:hover {
+      cursor: col-resize;
+    }
+  }
+  .resizer.vertical {
+    width: 100%;
+    height: 5px;
+    &:hover {
+      cursor: row-resize;
+    }
+  }
 `;

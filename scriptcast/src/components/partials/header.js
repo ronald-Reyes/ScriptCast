@@ -36,36 +36,38 @@ function Header({ onClearCurrentUser, type, Panels }) {
             </div>
           )}
           {type !== DASHBOARD_PAGE && (
-            <div className="recorderOptions">
-              <div
-                onClick={(e) => {
-                  e.stopPropagation();
-                  Panels.current[0].style.display = "flex";
-                  Panels.current[1].style.display = "none";
-                  Panels.current[2].style.display = "none";
-                }}
-              >
-                <TbSpeakerphone size={22} />
-              </div>
-              <div
-                onClick={(e) => {
-                  e.stopPropagation();
-                  Panels.current[0].style.display = "none";
-                  Panels.current[1].style.display = "flex";
-                  Panels.current[2].style.display = "none";
-                }}
-              >
-                <PiRecordFill size={22} />
-              </div>
-              <div
-                onClick={(e) => {
-                  e.stopPropagation();
-                  Panels.current[2].style.display = "flex";
-                  Panels.current[0].style.display = "none";
-                  Panels.current[1].style.display = "none";
-                }}
-              >
-                <RiFolderUploadLine size={22} />
+            <div className="recorderOptionsContainer">
+              <div className="recorderOptions">
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    Panels.current[0].style.display = "flex";
+                    Panels.current[1].style.display = "none";
+                    Panels.current[2].style.display = "none";
+                  }}
+                >
+                  <TbSpeakerphone size={22} />
+                </div>
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    Panels.current[0].style.display = "none";
+                    Panels.current[1].style.display = "flex";
+                    Panels.current[2].style.display = "none";
+                  }}
+                >
+                  <PiRecordFill size={22} />
+                </div>
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    Panels.current[2].style.display = "flex";
+                    Panels.current[0].style.display = "none";
+                    Panels.current[1].style.display = "none";
+                  }}
+                >
+                  <RiFolderUploadLine size={22} />
+                </div>
               </div>
             </div>
           )}
@@ -203,9 +205,14 @@ const StyledContainer = styled.div`
       }
     }
   }
-  .recorderOptions {
-    display: flex;
-    gap: 1rem;
-    cursor: pointer;
+  .recorderOptionsContainer {
+    position: absolute;
+    left: 50%;
+    margin-left: -50px;
+    .recorderOptions {
+      display: flex;
+      gap: 1rem;
+      cursor: pointer;
+    }
   }
 `;

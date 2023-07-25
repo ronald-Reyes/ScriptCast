@@ -1,5 +1,5 @@
 import React, { useImperativeHandle, forwardRef } from "react";
-
+import styled from "styled-components";
 import { connect } from "react-redux";
 
 const Player = forwardRef(({ textEditorRef, wordCounter }, ref) => {
@@ -43,32 +43,43 @@ const Player = forwardRef(({ textEditorRef, wordCounter }, ref) => {
   }
 
   return (
-    <div className="PlayerUI">
-      <button
-        onClick={() => {
-          stopPlayer();
-        }}
-      >
-        Stop
-      </button>
-      <button
-        onClick={() => {
-          handlePlayBtn(0, 500);
-        }}
-      >
-        start
-      </button>
-      <button
-        onClick={() => {
-          handlePlayBtn(wordCounter.current, 500);
-        }}
-      >
-        continue
-      </button>
-    </div>
+    <StyledContainer>
+      <div className="PlayerBtns">
+        <button
+          onClick={() => {
+            stopPlayer();
+          }}
+        >
+          Stop
+        </button>
+        <button
+          onClick={() => {
+            handlePlayBtn(0, 500);
+          }}
+        >
+          start
+        </button>
+        <button
+          onClick={() => {
+            handlePlayBtn(wordCounter.current, 500);
+          }}
+        >
+          continue
+        </button>
+      </div>
+    </StyledContainer>
   );
 });
 
 export default connect(null, null, null, {
   forwardRef: true,
 })(Player);
+
+const StyledContainer = styled.div`
+  .PlayerBtns {
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+    border-bottom: 1px solid grey;
+  }
+`;

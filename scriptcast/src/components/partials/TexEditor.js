@@ -359,7 +359,7 @@ export default connect(mapStateToProps, mapDispatchToProps, null, {
 
 const StyleContainer = styled.div`
   position: relative;
-  width: 700px;
+  width: 100%;
   box-sizing: border-box;
   padding: 20px;
   padding-top: 0;
