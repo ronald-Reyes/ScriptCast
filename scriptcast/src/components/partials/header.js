@@ -44,6 +44,7 @@ function Header({ onClearCurrentUser, type, Panels }) {
                     Panels.current[0].style.display = "flex";
                     Panels.current[1].style.display = "none";
                     Panels.current[2].style.display = "none";
+                    Panels.current[3].style.display = "none";
                   }}
                 >
                   <TbSpeakerphone size={22} />
@@ -54,6 +55,7 @@ function Header({ onClearCurrentUser, type, Panels }) {
                     Panels.current[0].style.display = "none";
                     Panels.current[1].style.display = "flex";
                     Panels.current[2].style.display = "none";
+                    Panels.current[3].style.display = "none";
                   }}
                 >
                   <PiRecordFill size={22} />
@@ -64,6 +66,7 @@ function Header({ onClearCurrentUser, type, Panels }) {
                     Panels.current[2].style.display = "flex";
                     Panels.current[0].style.display = "none";
                     Panels.current[1].style.display = "none";
+                    Panels.current[3].style.display = "none";
                   }}
                 >
                   <RiFolderUploadLine size={22} />

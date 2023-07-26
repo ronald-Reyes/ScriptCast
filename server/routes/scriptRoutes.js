@@ -6,6 +6,7 @@ const {
   deleteLine,
   updateTitle,
   deleteScript,
+  updateEdits,
 } = require("../controllers/scriptController");
 
 const router = require("express").Router();
@@ -17,5 +18,6 @@ router.post("/delete-all", deleteAll);
 router.post("/add-line", addLine);
 router.post("/delete-line", deleteLine);
 router.post("/delete-script", deleteScript);
+router.post("/update-edits", updateEdits);
 
 module.exports = router;

@@ -1,9 +1,26 @@
-import React, { useImperativeHandle, forwardRef } from "react";
+import React, {
+  useImperativeHandle,
+  forwardRef,
+  useRef,
+  useEffect,
+} from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 
 const Player = forwardRef(
-  ({ textEditorRef, wordCounter, script, audioArray }, ref) => {
+  (
+    {
+      textEditorRef,
+      wordCounter,
+      VideoPreviewer,
+      Panels,
+      currentSceneIndex,
+      script,
+      audioArray,
+      SceneEditorRef,
+    },
+    ref
+  ) => {
     const count = wordCounter;
     let myInterval;
     let isPlaying = false;
@@ -70,20 +87,59 @@ const Player = forwardRef(
             continue
           </button>
         </div>
-        <TimeLine script={script} audioArray={audioArray} />
+        <TimeLine
+          script={script}
+          audioArray={audioArray}
+          VideoPreviewer={VideoPreviewer}
+          Panels={Panels}
+          currentSceneIndex={currentSceneIndex}
+          SceneEditorRef={SceneEditorRef}
+        />
       </StyledContainer>
     );
   }
 );
-const TimeLine = ({ script, audioArray }) => {
-  console.log(script.lines);
+const TimeLine = ({
+  script,
+  audioArray,
+  VideoPreviewer,
+  Panels,
+  currentSceneIndex,
+  SceneEditorRef,
+}) => {
+  const SceneRef = useRef([]);
+  useEffect(() => {
+    if (script.lines.length)
+      SceneRef.current.map((el, i) => {
+        if (script.lines[i].edits.bgcolor === "black")
+          return (el.style.background = "transparent");
+        el.style.background = script.lines[i].edits.bgcolor;
+      });
+  }, [script]);
   return (
     <StripContainer>
       <div className="Container">
         <section className="linesStrip">
           {script.lines.map((line, i) => (
-            <div key={i} className="lineStrip">
-              {line.caster}
+            <div
+              ref={(el) => {
+                SceneRef.current[i] = el;
+              }}
+              key={i}
+              className="lineStrip"
+              onClick={(e) => {
+                VideoPreviewer.current.handleNextFrame(line.edits);
+
+                e.stopPropagation();
+                Panels.current[3].style.display = "flex";
+                Panels.current[0].style.display = "none";
+                Panels.current[1].style.display = "none";
+                Panels.current[2].style.display = "none";
+                currentSceneIndex.current = i;
+                SceneEditorRef.current.setCurrentSceneIndex(i);
+              }}
+            >
+              S{i}
             </div>
           ))}
         </section>
@@ -104,9 +160,7 @@ const mapStateToProps = (state) => ({
   script: state.script,
   audioArray: state.audioArray,
 });
-const mapDispatchToProps = (dispatch) => ({
-  onUploadClicked: (projectId, name, bin64) => dispatch(),
-});
+
 export default connect(mapStateToProps, null, null, {
   forwardRef: true,
 })(Player);
@@ -134,6 +188,7 @@ const StripContainer = styled.div`
       display: flex;
       margin-top: 5px;
       border-bottom: 1px solid blue;
+      cursor: pointer;
       .lineStrip {
         min-width: 100px;
         max-width: 100px;

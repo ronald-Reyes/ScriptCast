@@ -21,6 +21,7 @@ import {
   REMOVE_AUDIO,
   SET_AUDIO_INCLUDED,
   FETCH_ALL_AUDIO,
+  UPDATE_EDITS,
 } from "./actions";
 
 export const user = (state = {}, action) => {
@@ -118,6 +119,17 @@ export const script = (state = initScript, action) => {
           caster: `- Caster`,
           line,
           marks: [],
+          edits: {
+            bgcolor: "black",
+            fontcolor: "white",
+            text: "",
+            position: {
+              x: 320,
+              y: 180,
+            },
+            font: "30px Arial",
+            recordingId: "",
+          },
         },
         index
       );
@@ -146,6 +158,12 @@ export const script = (state = initScript, action) => {
       const { newTitle } = payload;
       const dummyState = { ...state };
       dummyState.title = newTitle;
+      return { ...state, ...dummyState };
+    }
+    case UPDATE_EDITS: {
+      const { index, line } = payload;
+      const dummyState = { ...state };
+      dummyState.lines[index] = line;
       return { ...state, ...dummyState };
     }
     default: {

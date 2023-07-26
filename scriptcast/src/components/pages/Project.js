@@ -7,6 +7,7 @@ import TTS from "../player/TTS";
 import UploadFolder from "../partials/UploadFolder";
 import AudioRecorderPanel from "../player/AudioRecorder";
 import VideoPreview from "../player/VideoPreview";
+import SceneEditor from "../partials/SceneEditor";
 
 export const PROJECT_PAGE = "PROJECT_PAGE";
 
@@ -23,6 +24,9 @@ export default function Project() {
   const wordCounter = useRef(0);
   const Panels = useRef([]);
   const TTSRef = useRef();
+  const VideoPreviewer = useRef();
+  const SceneEditorRef = useRef();
+  const currentSceneIndex = useRef();
 
   //needed for resize
   const resizer = useRef();
@@ -57,6 +61,7 @@ export default function Project() {
         Panels.current[0].style.display = "none";
         Panels.current[1].style.display = "none";
         Panels.current[2].style.display = "none";
+        Panels.current[3].style.display = "none";
       }}
       onMouseMove={(e) => {
         const dx = e.clientX - x;
@@ -119,6 +124,21 @@ export default function Project() {
         >
           <UploadFolder />
         </div>
+        <div
+          className="panel SceneEditorContainer"
+          ref={(el) => {
+            Panels.current[3] = el;
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
+          <SceneEditor
+            ref={SceneEditorRef}
+            VideoPreviewer={VideoPreviewer}
+            currentSceneIndex={currentSceneIndex}
+          />
+        </div>
       </div>
       <div className="MainSection">
         <div className="TextEditor">
@@ -127,11 +147,12 @@ export default function Project() {
             wordCounter={wordCounter}
             playerRef={playerRef}
             TTSRef={TTSRef}
+            Panels={Panels}
           />
         </div>
         <Resizer type="horizontal" />
         <div className="VidePreViewContainer">
-          <VideoPreview />
+          <VideoPreview ref={VideoPreviewer} />
         </div>
       </div>
       <div className="BottomSection">
@@ -140,6 +161,10 @@ export default function Project() {
           ref={playerRef}
           wordCounter={wordCounter}
           textEditorRef={textEditorRef}
+          VideoPreviewer={VideoPreviewer}
+          Panels={Panels}
+          SceneEditorRef={SceneEditorRef}
+          currentSceneIndex={currentSceneIndex}
         />
       </div>
     </MainContainer>
@@ -155,6 +180,9 @@ const MainContainer = styled.div`
       display: flex;
       justify-content: center;
       display: none;
+      &.SceneEditorContainer {
+        justify-content: left;
+      }
     }
   }
   .MainSection {

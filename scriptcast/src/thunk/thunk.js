@@ -16,6 +16,7 @@ import {
   uploadAudio,
   fetchAllAudio,
   deleteAudio,
+  updateEdits,
 } from "../redux/actions";
 
 export const setUser = (email, password) => async (dispatch, getState) => {
@@ -185,6 +186,29 @@ export const updateScriptLineThunk =
       const res = await response.json();
       if (res.status === true) {
         dispatch(updateScriptLine(index, line));
+      }
+    } catch (e) {
+      dispatch();
+    }
+  };
+
+export const updateEditsThunk =
+  (_id, index, line) => async (dispatch, getState) => {
+    try {
+      const body = JSON.stringify({ _id, index, line });
+      const response = await fetch(
+        `http://localhost:5000/api/script/update-edits`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "post",
+          body,
+        }
+      );
+      const res = await response.json();
+      if (res.status === true) {
+        dispatch(updateEdits(index, line));
       }
     } catch (e) {
       dispatch();

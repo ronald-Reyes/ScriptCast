@@ -24,6 +24,8 @@ export const UPLOAD_AUDIO = "UPLOAD_AUDIO";
 export const REMOVE_AUDIO = "REMOVE_AUDIO";
 export const SET_AUDIO_INCLUDED = "SET_AUDIO_INCLUDED";
 
+export const UPDATE_EDITS = "UPDATE_EDITS";
+
 //action creators
 export const setCurrentUser = (user) => ({
   type: SET_CURRENT_USER,
@@ -117,4 +119,9 @@ export const deleteAudio = (index) => ({
 export const setAudioIncluded = (index, include) => ({
   type: SET_AUDIO_INCLUDED,
   payload: { index, include },
+});
+
+export const updateEdits = (index, line) => ({
+  type: UPDATE_EDITS,
+  payload: { index, line },
 });

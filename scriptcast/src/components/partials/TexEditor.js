@@ -39,6 +39,7 @@ const TextEditor = forwardRef(
       wordCounter,
       playerRef,
       TTSRef,
+      Panels,
     },
     ref
   ) => {
@@ -208,6 +209,7 @@ const TextEditor = forwardRef(
                     className="lineContainer"
                     onClick={(e) => {
                       e.stopPropagation();
+                      Panels.current[3].style.display = "none";
                       TTSRef.current.setText(lineElements.current[i].innerText);
                     }}
                     onMouseOver={() => {
