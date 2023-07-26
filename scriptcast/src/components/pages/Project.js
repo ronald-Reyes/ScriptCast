@@ -168,16 +168,23 @@ const MainContainer = styled.div`
     .VidePreViewContainer {
       flex-grow: 1;
       background: grey;
+      display: flex;
+      justify-content: center;
+      .VideoPreview {
+        margin-top: 90px;
+      }
     }
   }
   .BottomSection {
     position: fixed;
     bottom: 0;
-    left: 0;
-    width: 100%;
+    left: 5%;
+    width: 90vw;
     height: 20%;
+    overflow-y: hidden;
+    overflow-x: hidden;
     background: white;
-    border: 1px solid grey;
+    box-shadow: -1px 5px 5px 5px rgba(128, 128, 128, 0.4);
   }
   .resizer.horizontal {
     width: 5px;
@@ -188,7 +195,8 @@ const MainContainer = styled.div`
   }
   .resizer.vertical {
     width: 100%;
-    height: 5px;
+    height: 10px;
+    background: rgba(255, 140, 0, 0.5);
     &:hover {
       cursor: row-resize;
     }
