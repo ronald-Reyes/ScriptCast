@@ -11,6 +11,7 @@ import logo from "../../images/ScriptCastLogo.png";
 import { FaImages } from "react-icons/fa";
 import { IoIosSave } from "react-icons/io";
 import { renderVideoThunk } from "../../thunk/thunk";
+import { useParams } from "react-router-dom";
 
 const VideoPreview = forwardRef(
   ({ script, audioArray, onDownloadClicked }, ref) => {
@@ -79,6 +80,7 @@ const RawFolder = forwardRef(({ script, onDownloadClicked }, ref) => {
   const [rawImages, setRawImages] = useState([]);
   const RenderCanvas = useRef(document.createElement("canvas"));
   const imagesContainer = useRef();
+  const params = useParams();
 
   useImperativeHandle(ref, () => ({
     setRawImages,
@@ -123,7 +125,10 @@ const RawFolder = forwardRef(({ script, onDownloadClicked }, ref) => {
         </div>
         <div
           onClick={() => {
-            onDownloadClicked(rawImages, { hi: "hello" });
+            onDownloadClicked(rawImages, {
+              projectId: params.projectId,
+              script,
+            });
             console.log(rawImages);
           }}
         >

@@ -1,7 +1,10 @@
+const { ffmpegCLI } = require("../FFMPEG/FFMPEG-CLI");
+
 module.exports.renderVideo = async (req, res, next) => {
   try {
     const { images, config } = req.body;
     const configFile = JSON.parse(config);
+    ffmpegCLI(images, configFile);
     return res.json({ status: true, config });
   } catch (err) {
     //Error Handling passed to the frontend

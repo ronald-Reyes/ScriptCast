@@ -449,7 +449,5 @@ export const renderVideoThunk =
       if (res.status === true) {
         alert("Successfully Converted to video.");
       }
-    } catch (e) {
-      dispatch();
-    }
+    } catch (e) {}
   };
