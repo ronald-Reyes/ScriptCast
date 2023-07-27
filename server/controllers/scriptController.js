@@ -110,6 +110,7 @@ module.exports.addLine = async (req, res, next) => {
                   },
                   font: "30px Arial",
                   recordingId: "",
+                  duration: 5000,
                 },
               },
             ],

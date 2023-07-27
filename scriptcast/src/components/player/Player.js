@@ -6,6 +6,8 @@ import React, {
 } from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
+import { VscDebugStart, VscDebugContinueSmall } from "react-icons/vsc";
+import { MdStop } from "react-icons/md";
 
 const Player = forwardRef(
   (
@@ -31,7 +33,6 @@ const Player = forwardRef(
       clearInterval(myInterval);
       isPlaying = false;
       textEditorRef.current.showLayer2();
-      console.log(`Last Count: ${count.current}`);
     }
     function handlePlayBtn(startCount, time = 500) {
       stopPlayer();
@@ -70,21 +71,21 @@ const Player = forwardRef(
               stopPlayer();
             }}
           >
-            Stop
+            <MdStop size={20} />
           </button>
           <button
             onClick={() => {
               handlePlayBtn(0, 500);
             }}
           >
-            start
+            <VscDebugStart size={20} />
           </button>
           <button
             onClick={() => {
               handlePlayBtn(wordCounter.current, 500);
             }}
           >
-            continue
+            <VscDebugContinueSmall size={20} />
           </button>
         </div>
         <TimeLine
@@ -109,7 +110,7 @@ const TimeLine = ({
 }) => {
   const SceneRef = useRef([]);
   useEffect(() => {
-    if (script.lines.length)
+    if (script)
       SceneRef.current.map((el, i) => {
         if (script.lines[i].edits.bgcolor === "black")
           return (el.style.background = "transparent");
@@ -120,6 +121,9 @@ const TimeLine = ({
     <StripContainer>
       <div className="Container">
         <section className="linesStrip">
+          <span>
+            <strong>Scenes</strong>
+          </span>
           {script.lines.map((line, i) => (
             <div
               ref={(el) => {
@@ -139,11 +143,16 @@ const TimeLine = ({
                 SceneEditorRef.current.setCurrentSceneIndex(i);
               }}
             >
-              S{i}
+              <span>
+                {Math.round(script.lines[i].edits.duration / 1000)} sec
+              </span>
             </div>
           ))}
         </section>
         <section className="audioStrips">
+          <span>
+            <strong>Audios</strong>
+          </span>
           {audioArray.map((audio, i) => (
             <div key={i} className="audioStrip">
               {audio.name}
@@ -171,7 +180,12 @@ const StyledContainer = styled.div`
     justify-content: center;
     padding: 5px;
     border-bottom: 1px solid grey;
-    background: rgba(255, 140, 0, 0.5);
+    background: rgba(0, 0, 255, 0.5);
+  }
+  button {
+    cursor: pointer;
+    border: none;
+    background: transparent;
   }
 `;
 const StripContainer = styled.div`
@@ -181,13 +195,17 @@ const StripContainer = styled.div`
   justify-content: center;
 
   .Container {
-    width: 80%;
+    width: 99%;
     overflow-x: scroll;
 
     .linesStrip {
+      background: rgba(0, 0, 0, 0.1);
       display: flex;
       margin-top: 5px;
-      border-bottom: 1px solid blue;
+      border-bottom: 1px solid grey;
+      padding-bottom: 5px;
+      gap: 5px;
+      height: 50px;
       cursor: pointer;
       .lineStrip {
         min-width: 100px;
@@ -195,12 +213,22 @@ const StripContainer = styled.div`
         height: 50px;
         resize: none;
         border: 1px solid black;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
       }
     }
     .audioStrips {
+      background: rgba(0, 0, 0, 0.1);
       display: flex;
       margin-top: 5px;
       margin-bottom: 5px;
+      border-bottom: 1px solid grey;
+      padding-bottom: 5px;
+      gap: 5px;
+      height: 50px;
       .audioStrip {
         //position: absolute;
         min-width: 100px;
@@ -209,6 +237,10 @@ const StripContainer = styled.div`
         resize: none;
         border: 1px solid black;
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
       }
     }
     &::-webkit-scrollbar {

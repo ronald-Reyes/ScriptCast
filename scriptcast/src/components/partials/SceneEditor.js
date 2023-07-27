@@ -21,12 +21,15 @@ const SceneEditor = forwardRef(
     useEffect(() => {
       if (initialEdits) {
         VideoPreviewer.current.handleNextFrame(initialEdits);
-        console.log(initialEdits);
       }
     }, [initialEdits]);
     useEffect(() => {
       if (currentSceneIndex != null) {
-        setInitialEdits(script.lines[currentSceneIndex].edits);
+        setInitialEdits({
+          ...script.lines[currentSceneIndex].edits,
+          Xposition: script.lines[currentSceneIndex].edits.position.x,
+          Yposition: script.lines[currentSceneIndex].edits.position.y,
+        });
       }
     }, [currentSceneIndex]);
     const handleSubmit = (e) => {
@@ -40,9 +43,23 @@ const SceneEditor = forwardRef(
     const handleChange = (e) => {
       if (e.target.name === "x" || e.target.name === "y") {
         initialEdits.position[e.target.name] = Number(e.target.value);
+        if (e.target.name === "x") {
+          setInitialEdits({
+            ...initialEdits,
+            [e.target.name]: e.target.value,
+            Xposition: e.target.value,
+          });
+        } else {
+          setInitialEdits({
+            ...initialEdits,
+            [e.target.name]: e.target.value,
+            Yposition: e.target.value,
+          });
+        }
+      } else if (e.target.name === "duration") {
         setInitialEdits({
           ...initialEdits,
-          [e.target.name]: e.target.value,
+          [e.target.name]: Number(e.target.value),
         });
       } else {
         setInitialEdits({
@@ -67,12 +84,13 @@ const SceneEditor = forwardRef(
             </div>
             <div>
               <label>Text:</label>
-              <input
-                type="input"
+              <textarea
                 name="text"
+                rows="4"
+                cols="50"
                 value={initialEdits.text}
                 onChange={handleChange}
-              />
+              ></textarea>
             </div>
             <div>
               <label>Font Style:</label>
@@ -93,21 +111,30 @@ const SceneEditor = forwardRef(
               />
             </div>
             <div>
-              <label>Position:{"("}</label>
+              <label>Position:{"( X:"}</label>
               <input
                 type="number"
                 name="x"
-                defaultValue={320}
+                value={initialEdits.Xposition}
                 onChange={handleChange}
               />
-              ,
+              , Y:
               <input
                 type="number"
                 name="y"
-                defaultValue={180}
+                value={initialEdits.Yposition}
                 onChange={handleChange}
               />
               {")"}
+            </div>
+            <div>
+              <label>Duration:</label>
+              <input
+                type="number"
+                name="duration"
+                value={initialEdits.duration}
+                onChange={handleChange}
+              />
             </div>
             <button type="Submit">Save</button>
           </form>

@@ -129,6 +129,7 @@ export const script = (state = initScript, action) => {
             },
             font: "30px Arial",
             recordingId: "",
+            duration: 5000,
           },
         },
         index

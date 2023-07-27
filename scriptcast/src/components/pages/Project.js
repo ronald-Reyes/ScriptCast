@@ -224,7 +224,8 @@ const MainContainer = styled.div`
   .resizer.vertical {
     width: 100%;
     height: 10px;
-    background: rgba(255, 140, 0, 0.5);
+    background: rgba(0, 0, 255, 0.5);
+    display: hidden;
     &:hover {
       cursor: row-resize;
     }

@@ -5,6 +5,7 @@ const userRoutes = require("./routes/userRoutes");
 const projectRoutes = require("./routes/projectRoute");
 const scriptRoutes = require("./routes/scriptRoutes");
 const audioRoutes = require("./routes/audioRoutes");
+const videoRoutes = require("./routes/videoRoutes");
 const multer = require("multer");
 require("dotenv").config();
 
@@ -20,6 +21,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/project", projectRoutes);
 app.use("/api/script", scriptRoutes);
 app.use("/api/audio", audioRoutes);
+app.use("/api/video", videoRoutes);
 
 //catch no matched route
 app.use((req, res, next) => {

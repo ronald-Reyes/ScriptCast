@@ -431,3 +431,25 @@ export const deleteAudioThunk = (_id, index) => async (dispatch, getState) => {
     dispatch();
   }
 };
+
+export const renderVideoThunk =
+  (images, config) => async (dispatch, getState) => {
+    try {
+      const formData = new FormData();
+      for (const image of images) {
+        formData.append("images", image);
+      }
+      formData.append("config", JSON.stringify(config));
+
+      const response = await fetch(`http://localhost:5000/api/video/render`, {
+        method: "post",
+        body: formData,
+      });
+      const res = await response.json();
+      if (res.status === true) {
+        alert("Successfully Converted to video.");
+      }
+    } catch (e) {
+      dispatch();
+    }
+  };

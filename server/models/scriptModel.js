@@ -34,6 +34,7 @@ const scriptSchema = new mongoose.Schema(
             },
             font: "30px Arial",
             recordingId: "",
+            duration: 5000,
           },
         },
       ],
