@@ -43,14 +43,24 @@ module.exports.removeAudio = async (req, res, next) => {
     return res.json({ status: false, msg: err.message });
   }
 };
-module.exports.setAudioIncluded = async (req, res, next) => {
+module.exports.deleteMany = async (req, res, next) => {
   try {
-    const { _id, include } = req.body;
-    const projectUpdated = await AudioModel.updateOne(
+    const { projectId } = req.body;
+    const audioDeleted = await AudioModel.deleteMany({ projectId });
+    if (audioDeleted) return res.json({ status: true, audioDeleted });
+  } catch (err) {
+    //Error Handling passed to the frontend
+    return res.json({ status: false, msg: err.message });
+  }
+};
+module.exports.updateAudio = async (req, res, next) => {
+  try {
+    const { _id, audio } = req.body;
+    const audioUpdated = await AudioModel.updateOne(
       { _id },
-      { $set: { include } }
+      { $set: { ...audio } }
     );
-    if (projectUpdated) return res.json({ status: true, projectUpdated });
+    if (audioUpdated) return res.json({ status: true, audioUpdated });
   } catch (err) {
     //Error Handling passed to the frontend
     return res.json({ status: false, msg: err.message });

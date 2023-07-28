@@ -76,6 +76,7 @@ const VideoPreview = forwardRef(
           script={script}
           onDownloadClicked={onDownloadClicked}
           lastFrame={lastFrame}
+          audioArray={audioArray}
         />
       </StyledContainer>
     );
@@ -83,7 +84,7 @@ const VideoPreview = forwardRef(
 );
 
 const RawFolder = forwardRef(
-  ({ script, onDownloadClicked, lastFrame }, ref) => {
+  ({ script, onDownloadClicked, lastFrame, audioArray }, ref) => {
     const [rawImages, setRawImages] = useState([]);
     const RenderCanvas = useRef(document.createElement("canvas"));
     const imagesContainer = useRef();
@@ -142,6 +143,7 @@ const RawFolder = forwardRef(
               onDownloadClicked(rawImages, {
                 projectId: params.projectId,
                 script,
+                audioArray,
               });
               navigate(`/video/${params.projectId}`);
             }}

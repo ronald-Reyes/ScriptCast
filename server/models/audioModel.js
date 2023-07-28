@@ -18,7 +18,9 @@ const audioSchema = new mongoose.Schema(
     },
     include: {
       type: mongoose.Schema.Types.Mixed,
-      default: null,
+      default: {
+        startTime: null,
+      },
     },
   },
   { timestamps: true }

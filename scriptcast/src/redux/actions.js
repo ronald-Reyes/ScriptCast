@@ -22,7 +22,7 @@ export const UPDATE_SCRIPT_TITLE = "UPDATE_SCRIPT_TITLE";
 export const FETCH_ALL_AUDIO = "FETCH_ALL_AUDIO";
 export const UPLOAD_AUDIO = "UPLOAD_AUDIO";
 export const REMOVE_AUDIO = "REMOVE_AUDIO";
-export const SET_AUDIO_INCLUDED = "SET_AUDIO_INCLUDED";
+export const UPDATE_AUDIO = "UPDATE_AUDIO";
 
 export const UPDATE_EDITS = "UPDATE_EDITS";
 
@@ -116,9 +116,9 @@ export const deleteAudio = (index) => ({
   type: REMOVE_AUDIO,
   payload: { index },
 });
-export const setAudioIncluded = (index, include) => ({
-  type: SET_AUDIO_INCLUDED,
-  payload: { index, include },
+export const updateAudio = (index, audio) => ({
+  type: UPDATE_AUDIO,
+  payload: { index, audio },
 });
 
 export const updateEdits = (index, line) => ({

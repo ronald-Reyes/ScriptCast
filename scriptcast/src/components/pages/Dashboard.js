@@ -170,7 +170,7 @@ export function Dashboard({
                     </ul>
                   )}
                   {projects.length === 0 && (
-                    <h3 class="EmptyProject">
+                    <h3 className="EmptyProject">
                       Create your first project{" "}
                       <div
                         onClick={(e) => {

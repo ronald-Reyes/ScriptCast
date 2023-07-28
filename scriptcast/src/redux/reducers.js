@@ -19,7 +19,7 @@ import {
   CLEAR_CURRENT_USER,
   UPLOAD_AUDIO,
   REMOVE_AUDIO,
-  SET_AUDIO_INCLUDED,
+  UPDATE_AUDIO,
   FETCH_ALL_AUDIO,
   UPDATE_EDITS,
 } from "./actions";
@@ -215,7 +215,6 @@ export const audioArray = (state = initAudioArray, action) => {
     case FETCH_ALL_AUDIO: {
       const { audioArray } = payload;
       if (audioArray === null) return state;
-      console.log(audioArray);
       return audioArray;
     }
     case UPLOAD_AUDIO: {
@@ -226,10 +225,10 @@ export const audioArray = (state = initAudioArray, action) => {
       const { index } = payload;
       return deleteArr(state, index);
     }
-    case SET_AUDIO_INCLUDED: {
-      const { index, include } = payload;
+    case UPDATE_AUDIO: {
+      const { index, audio } = payload;
       const dummyState = [...state];
-      dummyState[index] = { ...dummyState[index], include };
+      dummyState[index] = { ...dummyState[index], ...audio };
       return dummyState;
     }
 

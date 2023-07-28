@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import AudioUploader from "../player/AudioUploader";
 import styled from "styled-components";
 import { connect } from "react-redux";
@@ -9,9 +9,19 @@ import { BsFillStopFill } from "react-icons/bs";
 import { fetchAllAudioThunk, deleteAudioThunk } from "../../thunk/thunk";
 import { useParams } from "react-router-dom";
 
-function UploadFolder({ audioArray, onSynchClicked, onDeleteClicked }) {
+function UploadFolder({
+  audioArray,
+  onSynchClicked,
+  onDeleteClicked,
+  currentUser,
+}) {
   const params = useParams();
   const audioSelected = useRef(null);
+  useEffect(() => {
+    if (currentUser) {
+      onSynchClicked(params.projectId);
+    }
+  }, []);
   const handleClick = (audio) => {
     if (audioSelected.current === null) {
       audioSelected.current = new Audio(audio.bin64);
@@ -56,7 +66,6 @@ function UploadFolder({ audioArray, onSynchClicked, onDeleteClicked }) {
           className="Sync"
           onClick={() => {
             onSynchClicked(params.projectId);
-            console.log(params.projectId);
           }}
         >
           <GoSync /> Please Sync Manually to Database
@@ -67,6 +76,7 @@ function UploadFolder({ audioArray, onSynchClicked, onDeleteClicked }) {
 }
 const mapStateToProps = (state) => ({
   audioArray: state.audioArray,
+  currentUser: state.user.user,
 });
 const mapDispatchToProps = (dispatch) => ({
   onSynchClicked: (projectId) => dispatch(fetchAllAudioThunk(projectId)),

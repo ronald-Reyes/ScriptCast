@@ -2,7 +2,8 @@ const {
   fetchAllAudio,
   uploadAudio,
   removeAudio,
-  setAudioIncluded,
+  updateAudio,
+  deleteMany,
 } = require("../controllers/audioControllers");
 
 const router = require("express").Router();
@@ -10,6 +11,7 @@ const router = require("express").Router();
 router.post("/getAll", fetchAllAudio);
 router.post("/upload", uploadAudio);
 router.post("/remove", removeAudio);
-router.post("/setAudio", setAudioIncluded);
+router.post("/deleteMany", deleteMany);
+router.post("/updateAudio", updateAudio);
 
 module.exports = router;

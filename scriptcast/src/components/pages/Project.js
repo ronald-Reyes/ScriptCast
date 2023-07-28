@@ -8,6 +8,7 @@ import UploadFolder from "../partials/UploadFolder";
 import AudioRecorderPanel from "../player/AudioRecorder";
 import VideoPreview from "../player/VideoPreview";
 import SceneEditor from "../partials/SceneEditor";
+import AudioEditor from "../partials/AudioEditor";
 
 export const PROJECT_PAGE = "PROJECT_PAGE";
 
@@ -27,6 +28,7 @@ export default function Project() {
   const VideoPreviewer = useRef();
   const SceneEditorRef = useRef();
   const currentSceneIndex = useRef();
+  const AudioEditorRef = useRef();
 
   //needed for resize
   const resizer = useRef();
@@ -62,6 +64,7 @@ export default function Project() {
         Panels.current[1].style.display = "none";
         Panels.current[2].style.display = "none";
         Panels.current[3].style.display = "none";
+        Panels.current[4].style.display = "none";
       }}
       onMouseMove={(e) => {
         const dx = e.clientX - x;
@@ -139,6 +142,17 @@ export default function Project() {
             currentSceneIndex={currentSceneIndex}
           />
         </div>
+        <div
+          className="panel AudioEditorContainer"
+          ref={(el) => {
+            Panels.current[4] = el;
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
+          <AudioEditor ref={AudioEditorRef} />
+        </div>
       </div>
       <div className="MainSection">
         <div className="TextEditor">
@@ -165,6 +179,7 @@ export default function Project() {
           Panels={Panels}
           SceneEditorRef={SceneEditorRef}
           currentSceneIndex={currentSceneIndex}
+          AudioEditorRef={AudioEditorRef}
         />
       </div>
     </MainContainer>
@@ -181,6 +196,9 @@ const MainContainer = styled.div`
       justify-content: center;
       display: none;
       &.SceneEditorContainer {
+        justify-content: left;
+      }
+      &.AudioEditorContainer {
         justify-content: left;
       }
     }

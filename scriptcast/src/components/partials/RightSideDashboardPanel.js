@@ -26,7 +26,6 @@ export function RightSideDashboardPanel({
   const projectDescription = useRef();
   const handleSubmitBtnClick = () => {
     const actionType = pageTitle.current.innerText;
-    console.log(actionType);
     const name =
       projectName.current.value === "" ? undefined : projectName.current.value;
     const description =

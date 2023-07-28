@@ -8,6 +8,11 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import { VscDebugStart, VscDebugContinueSmall } from "react-icons/vsc";
 import { MdStop } from "react-icons/md";
+import { IoIosAdd } from "react-icons/io";
+import { IoIosRemoveCircleOutline } from "react-icons/io";
+import { BsPlayFill } from "react-icons/bs";
+import { BsFillStopFill } from "react-icons/bs";
+import { deleteAudioThunk } from "../../thunk/thunk";
 
 const Player = forwardRef(
   (
@@ -20,6 +25,7 @@ const Player = forwardRef(
       script,
       audioArray,
       SceneEditorRef,
+      AudioEditorRef,
     },
     ref
   ) => {
@@ -93,6 +99,7 @@ const Player = forwardRef(
           Panels={Panels}
           currentSceneIndex={currentSceneIndex}
           SceneEditorRef={SceneEditorRef}
+          AudioEditorRef={AudioEditorRef}
         />
       </StyledContainer>
     );
@@ -105,7 +112,10 @@ const TimeLine = ({
   Panels,
   currentSceneIndex,
   SceneEditorRef,
+  AudioEditorRef,
+  onDeleteClicked,
 }) => {
+  const audioSelected = useRef(null);
   const SceneRef = useRef([]);
   useEffect(() => {
     SceneRef.current.map((el, i) => {
@@ -116,6 +126,16 @@ const TimeLine = ({
       }
     });
   }, [script]);
+  const handleClick = (audio) => {
+    if (audioSelected.current === null) {
+      audioSelected.current = new Audio(audio.bin64);
+      audioSelected.current.className = "AudioPlayer";
+      audioSelected.current.play();
+      return;
+    }
+    audioSelected.current.pause();
+    audioSelected.current = null;
+  };
   return (
     <StripContainer>
       <div className="Container">
@@ -138,6 +158,7 @@ const TimeLine = ({
                 Panels.current[0].style.display = "none";
                 Panels.current[1].style.display = "none";
                 Panels.current[2].style.display = "none";
+                Panels.current[4].style.display = "none";
                 currentSceneIndex.current = i;
                 SceneEditorRef.current.setCurrentSceneIndex(i);
               }}
@@ -151,10 +172,54 @@ const TimeLine = ({
             <strong>Audios</strong>
           </span>
           {audioArray.map((audio, i) => (
-            <div key={i} className="audioStrip">
-              {audio.name}
+            <div
+              key={i}
+              className="audioStrip"
+              onClick={(e) => {
+                e.stopPropagation();
+                Panels.current[3].style.display = "none";
+                Panels.current[0].style.display = "none";
+                Panels.current[1].style.display = "none";
+                Panels.current[2].style.display = "none";
+                Panels.current[4].style.display = "flex";
+                AudioEditorRef.current.setCurrentAudioIndex(i);
+              }}
+            >
+              <div>
+                <BsPlayFill
+                  onClick={() => {
+                    handleClick(audio);
+                  }}
+                />
+                <BsFillStopFill
+                  onClick={() => {
+                    handleClick(audio);
+                  }}
+                />
+                <IoIosRemoveCircleOutline
+                  onClick={(e) => {
+                    onDeleteClicked(audio._id, i);
+                  }}
+                />
+              </div>
+              <div className="startTime">
+                <span>{audio.name}</span>
+              </div>
             </div>
           ))}
+          <div
+            className="audioStrip"
+            onClick={(e) => {
+              e.stopPropagation();
+              Panels.current[3].style.display = "none";
+              Panels.current[0].style.display = "none";
+              Panels.current[1].style.display = "none";
+              Panels.current[2].style.display = "flex";
+              Panels.current[4].style.display = "none";
+            }}
+          >
+            <IoIosAdd size={30} />
+          </div>
         </section>
         <section className="newStrip"></section>
       </div>
@@ -166,7 +231,10 @@ const mapStateToProps = (state) => ({
   script: state.script,
   audioArray: state.audioArray,
 });
-const TimeLineConnect = connect(mapStateToProps, null, null, {
+const mapDispatchToProps = (dispatch) => ({
+  onDeleteClicked: (_id, index) => dispatch(deleteAudioThunk(_id, index)),
+});
+const TimeLineConnect = connect(mapStateToProps, mapDispatchToProps, null, {
   forwardRef: true,
 })(TimeLine);
 
@@ -206,8 +274,9 @@ const StripContainer = styled.div`
       padding-bottom: 5px;
       gap: 5px;
       height: 50px;
-      cursor: pointer;
+
       .lineStrip {
+        cursor: pointer;
         min-width: 100px;
         max-width: 100px;
         height: 50px;
@@ -229,39 +298,53 @@ const StripContainer = styled.div`
       padding-bottom: 5px;
       gap: 5px;
       height: 50px;
+
       .audioStrip {
         //position: absolute;
+        background: rgba(255, 140, 0, 0.5);
+        cursor: pointer;
         min-width: 100px;
         max-width: 100px;
         height: 50px;
         resize: none;
-        border: 1px solid black;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+        border: 1px solid rgba(255, 140, 0, 0.5);
+        overflow-x: auto;
+        .startTime {
+          text-align: center;
+        }
+
+        &:last-child {
+          border: none;
+          min-width: 50px;
+          max-width: 50px;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+          background: transparent;
+        }
       }
     }
-    &::-webkit-scrollbar {
-      height: 7px;
-    }
+  }
+  ::-webkit-scrollbar {
+    height: 7px;
+    width: 7px;
+  }
 
-    /* Track */
-    &::-webkit-scrollbar-track {
-      background: gainsboro;
-      border-radius: 7px;
-    }
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: gainsboro;
+    border-radius: 7px;
+  }
 
-    /* Handle */
-    &::-webkit-scrollbar-thumb {
-      background: rgba(255, 140, 0, 0.5);
-      border-radius: 5px;
-    }
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 5px;
+  }
 
-    /* Handle on hover */
-    &::-webkit-scrollbar-thumb:hover {
-      background: #555;
-    }
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
   }
 `;

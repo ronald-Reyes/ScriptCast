@@ -17,6 +17,7 @@ import {
   fetchAllAudio,
   deleteAudio,
   updateEdits,
+  updateAudio,
 } from "../redux/actions";
 
 export const setUser = (email, password) => async (dispatch, getState) => {
@@ -111,9 +112,17 @@ export const deleteProjectThunk =
         body,
       });
       const res = await response.json();
-      //delet also the script attached to this project
+      //delete also the script attached to this project
       const body2 = JSON.stringify({ projectId: _id });
       await fetch(`http://localhost:5000/api/script/delete-script`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "post",
+        body: body2,
+      });
+      //delete also the audio attached to this project
+      await fetch(`http://localhost:5000/api/audio/deleteMany`, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -404,7 +413,6 @@ export const fetchAllAudioThunk = (projectId) => async (dispatch, getState) => {
     });
     const res = await response.json();
     if (res.status === true) {
-      alert("Successfully fetched from database.");
       dispatch(fetchAllAudio(res.audioArray));
     }
   } catch (e) {
@@ -432,6 +440,29 @@ export const deleteAudioThunk = (_id, index) => async (dispatch, getState) => {
   }
 };
 
+export const updateAudioThunk =
+  (_id, index, audio) => async (dispatch, getState) => {
+    try {
+      const body = JSON.stringify({ _id, audio });
+      const response = await fetch(
+        `http://localhost:5000/api/audio/updateAudio`,
+        {
+          method: "post",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body,
+        }
+      );
+      const res = await response.json();
+      if (res.status === true) {
+        alert("Successfully updated from database.");
+        dispatch(updateAudio(index, audio));
+      }
+    } catch (e) {
+      dispatch();
+    }
+  };
 export const renderVideoThunk =
   (images, config) => async (dispatch, getState) => {
     try {
@@ -439,6 +470,7 @@ export const renderVideoThunk =
       for (const image of images) {
         formData.append("images", image);
       }
+
       formData.append("config", JSON.stringify(config));
 
       const response = await fetch(`http://localhost:5000/api/video/render`, {
