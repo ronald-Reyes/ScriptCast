@@ -12,7 +12,7 @@ import { PiRecordFill } from "react-icons/pi";
 import { RiFolderUploadLine } from "react-icons/ri";
 import styled from "styled-components";
 import { DASHBOARD_PAGE } from "../pages/Dashboard";
-import { PROJECT_PAGE } from "../pages/Dashboard";
+import { PROJECT_PAGE } from "../pages/Project";
 
 function Header({ onClearCurrentUser, type, Panels }) {
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ function Header({ onClearCurrentUser, type, Panels }) {
               </button>
             </div>
           )}
-          {type !== DASHBOARD_PAGE && (
+          {type === PROJECT_PAGE && (
             <div className="recorderOptionsContainer">
               <div className="recorderOptions">
                 <div

@@ -23,13 +23,19 @@ module.exports.ffmpegCLI = async (images, { projectId, script }) => {
       await fs.writeFile(`./${projectId}/raw-images/${i}.png`, buffer);
 
       //creates a txt configuration required to merge the images
-      await fs.appendFile(
-        `./${projectId}/concat.txt`,
-        `${i !== 0 ? `\n` : ``}file raw-images/${i}.png\noutpoint ${
-          lines[i].edits.duration / 1000
-        }`
-      );
+      if (i !== images.length - 1)
+        await fs.appendFile(
+          `./${projectId}/concat.txt`,
+          `${i !== 0 ? `\n` : ``}file raw-images/${i}.png\noutpoint ${
+            lines[i].edits.duration / 1000
+          }`
+        );
     }
+    //Additional config for the last frame which is the logo
+    await fs.appendFile(
+      `./${projectId}/concat.txt`,
+      `\nfile raw-images/${images.length - 1}.png\noutpoint 5`
+    );
 
     //executes the ffmpeg command;
     await exec(

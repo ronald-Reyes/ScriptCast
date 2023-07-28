@@ -88,9 +88,7 @@ const Player = forwardRef(
             <VscDebugContinueSmall size={20} />
           </button>
         </div>
-        <TimeLine
-          script={script}
-          audioArray={audioArray}
+        <TimeLineConnect
           VideoPreviewer={VideoPreviewer}
           Panels={Panels}
           currentSceneIndex={currentSceneIndex}
@@ -110,12 +108,13 @@ const TimeLine = ({
 }) => {
   const SceneRef = useRef([]);
   useEffect(() => {
-    if (script)
-      SceneRef.current.map((el, i) => {
+    SceneRef.current.map((el, i) => {
+      if (script.lines[i] !== undefined) {
         if (script.lines[i].edits.bgcolor === "black")
           return (el.style.background = "transparent");
         el.style.background = script.lines[i].edits.bgcolor;
-      });
+      }
+    });
   }, [script]);
   return (
     <StripContainer>
@@ -143,9 +142,7 @@ const TimeLine = ({
                 SceneEditorRef.current.setCurrentSceneIndex(i);
               }}
             >
-              <span>
-                {Math.round(script.lines[i].edits.duration / 1000)} sec
-              </span>
+              <span>{Math.round(line.edits.duration / 1000)} sec</span>
             </div>
           ))}
         </section>
@@ -169,6 +166,9 @@ const mapStateToProps = (state) => ({
   script: state.script,
   audioArray: state.audioArray,
 });
+const TimeLineConnect = connect(mapStateToProps, null, null, {
+  forwardRef: true,
+})(TimeLine);
 
 export default connect(mapStateToProps, null, null, {
   forwardRef: true,

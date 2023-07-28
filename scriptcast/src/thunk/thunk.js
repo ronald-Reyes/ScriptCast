@@ -447,7 +447,7 @@ export const renderVideoThunk =
       });
       const res = await response.json();
       if (res.status === true) {
-        alert("Successfully Converted to video.");
+        alert("Video successfully converted, Please reload the page");
       }
     } catch (e) {}
   };

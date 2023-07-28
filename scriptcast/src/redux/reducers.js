@@ -86,9 +86,21 @@ const initScript = {
   title: "Untitled",
   lines: [
     {
-      caster: "Caster 0",
-      line: "Type Here...",
+      caster: "- Caster 0",
+      line: "You can type your script here or speak while the mic is listening. Hover over and click the speech recognition icon to start listening. Then click the start button to play. Enjoy!!!",
       marks: [],
+      edits: {
+        bgcolor: "black",
+        fontcolor: "white",
+        text: "",
+        position: {
+          x: 320,
+          y: 180,
+        },
+        font: "30px Arial",
+        recordingId: "",
+        duration: 5000,
+      },
     },
   ],
 };

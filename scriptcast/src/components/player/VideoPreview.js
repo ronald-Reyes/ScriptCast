@@ -11,12 +11,13 @@ import logo from "../../images/ScriptCastLogo.png";
 import { FaImages } from "react-icons/fa";
 import { IoIosSave } from "react-icons/io";
 import { renderVideoThunk } from "../../thunk/thunk";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const VideoPreview = forwardRef(
   ({ script, audioArray, onDownloadClicked }, ref) => {
     const canvas = useRef();
     const frameCount = useRef(0);
+    const lastFrame = useRef();
 
     useImperativeHandle(ref, () => ({
       handleNextFrame,
@@ -34,6 +35,7 @@ const VideoPreview = forwardRef(
       base_image.onload = function () {
         const ctx = canvas.current.getContext("2d");
         ctx.drawImage(base_image, 280, 90, 100, 100);
+        lastFrame.current = canvas.current.toDataURL("image/png");
       };
     }, []);
     const handleNextFrame = ({
@@ -70,82 +72,96 @@ const VideoPreview = forwardRef(
             <canvas ref={canvas} width={640} height={360}></canvas>
           </div>
         </div>
-        <RawFolder script={script} onDownloadClicked={onDownloadClicked} />
+        <RawFolder
+          script={script}
+          onDownloadClicked={onDownloadClicked}
+          lastFrame={lastFrame}
+        />
       </StyledContainer>
     );
   }
 );
 
-const RawFolder = forwardRef(({ script, onDownloadClicked }, ref) => {
-  const [rawImages, setRawImages] = useState([]);
-  const RenderCanvas = useRef(document.createElement("canvas"));
-  const imagesContainer = useRef();
-  const params = useParams();
+const RawFolder = forwardRef(
+  ({ script, onDownloadClicked, lastFrame }, ref) => {
+    const [rawImages, setRawImages] = useState([]);
+    const RenderCanvas = useRef(document.createElement("canvas"));
+    const imagesContainer = useRef();
+    const params = useParams();
+    const navigate = useNavigate();
 
-  useImperativeHandle(ref, () => ({
-    setRawImages,
-  }));
-  useEffect(() => {
-    RenderCanvas.current.width = 640;
-    RenderCanvas.current.height = 360;
-    const raw = [];
-    script.lines.map((scene, i) => {
-      const { bgcolor, fontcolor, font, text, position } = scene.edits;
-      fillBackground(bgcolor);
-      writeText(fontcolor, font, text, position);
-      raw[i] = RenderCanvas.current.toDataURL("image/png");
-    });
+    useImperativeHandle(ref, () => ({
+      setRawImages,
+    }));
+    useEffect(() => {
+      RenderCanvas.current.width = 640;
+      RenderCanvas.current.height = 360;
+      const raw = [];
+      script.lines.map((scene, i) => {
+        const { bgcolor, fontcolor, font, text, position } = scene.edits;
+        fillBackground(bgcolor);
+        writeText(fontcolor, font, text, position);
+        raw[i] = RenderCanvas.current.toDataURL("image/png");
+      });
+      raw.push(lastFrame.current);
 
-    setRawImages(raw);
-  }, [script]);
+      setRawImages(raw);
+    }, [script]);
 
-  const fillBackground = (bgcolor) => {
-    const ctx = RenderCanvas.current.getContext("2d");
-    ctx.fillStyle = bgcolor;
-    ctx.fillRect(0, 0, RenderCanvas.current.width, RenderCanvas.current.height);
-  };
-  const writeText = (fontcolor, font, text, position) => {
-    const ctx = RenderCanvas.current.getContext("2d");
-    ctx.fillStyle = fontcolor;
-    ctx.font = font;
-    ctx.fillText(text, position.x, position.y);
-  };
-  return (
-    <div>
-      <div className="previewBtns">
-        <div
-          className="RawFolder"
-          onClick={() => {
-            imagesContainer.current.style.display === "none"
-              ? (imagesContainer.current.style.display = "block")
-              : (imagesContainer.current.style.display = "none");
-          }}
-        >
-          <FaImages size={30} />
+    const fillBackground = (bgcolor) => {
+      const ctx = RenderCanvas.current.getContext("2d");
+      ctx.fillStyle = bgcolor;
+      ctx.fillRect(
+        0,
+        0,
+        RenderCanvas.current.width,
+        RenderCanvas.current.height
+      );
+    };
+    const writeText = (fontcolor, font, text, position) => {
+      const ctx = RenderCanvas.current.getContext("2d");
+      ctx.fillStyle = fontcolor;
+      ctx.font = font;
+      ctx.fillText(text, position.x, position.y);
+    };
+    return (
+      <div>
+        <div className="previewBtns">
+          <div
+            className="RawFolder"
+            onClick={() => {
+              imagesContainer.current.style.display === "none"
+                ? (imagesContainer.current.style.display = "block")
+                : (imagesContainer.current.style.display = "none");
+            }}
+          >
+            <FaImages size={30} />
+          </div>
+          <div
+            onClick={() => {
+              onDownloadClicked(rawImages, {
+                projectId: params.projectId,
+                script,
+              });
+              navigate(`/video/${params.projectId}`);
+            }}
+          >
+            <IoIosSave size={30} />
+          </div>
         </div>
-        <div
-          onClick={() => {
-            onDownloadClicked(rawImages, {
-              projectId: params.projectId,
-              script,
-            });
-            console.log(rawImages);
-          }}
-        >
-          <IoIosSave size={30} />
-        </div>
+
+        <RawFolderStyled ref={imagesContainer}>
+          <div className="Images">
+            {rawImages.map((rawImage, i) => {
+              return <img key={i} src={rawImage} alt="imageObject" />;
+            })}
+          </div>
+          <div className="SpaceBottom"></div>
+        </RawFolderStyled>
       </div>
-
-      <RawFolderStyled ref={imagesContainer}>
-        <div className="Images">
-          {rawImages.map((rawImage, i) => {
-            return <img key={i} src={rawImage} alt="imageObject" />;
-          })}
-        </div>
-      </RawFolderStyled>
-    </div>
-  );
-});
+    );
+  }
+);
 const mapStateToProps = (state) => ({
   script: state.script,
   audioArray: state.audioArray,
@@ -164,8 +180,13 @@ const StyledContainer = styled.div`
   }
   .previewBtns {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 5px;
     cursor: pointer;
+  }
+  .SpaceBottom {
+    width: 100px;
+    height: 300px;
   }
 `;
 
