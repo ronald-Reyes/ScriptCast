@@ -13,6 +13,7 @@ import { IoIosRemoveCircleOutline } from "react-icons/io";
 import { BsPlayFill } from "react-icons/bs";
 import { BsFillStopFill } from "react-icons/bs";
 import { deleteAudioThunk } from "../../thunk/thunk";
+import Time from "./Time";
 
 const Player = forwardRef(
   (
@@ -26,6 +27,7 @@ const Player = forwardRef(
       audioArray,
       SceneEditorRef,
       AudioEditorRef,
+      TimeRef,
     },
     ref
   ) => {
@@ -71,10 +73,12 @@ const Player = forwardRef(
 
     return (
       <StyledContainer>
+        <Time ref={TimeRef} VideoPreviewer={VideoPreviewer} />
         <div className="PlayerBtns">
           <button
             onClick={() => {
               stopPlayer();
+              TimeRef.current.timerStop();
             }}
           >
             <MdStop size={20} />
@@ -82,6 +86,7 @@ const Player = forwardRef(
           <button
             onClick={() => {
               handlePlayBtn(0, 500);
+              TimeRef.current.timerPlay();
             }}
           >
             <VscDebugStart size={20} />

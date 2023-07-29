@@ -63,7 +63,7 @@ module.exports.ffmpegCLI = async (
       //saves the mp3 to the created dir
       await fs.writeFile(`./${projectId}/${i}.mp3`, buffer);
 
-      part1 += `-i ${projectId}/${i}.mp3`;
+      part1 += ` -i ${projectId}/${i}.mp3`;
       part3 += `[${i}:a]adelay=${audioArray[i].include.startTime * 1000}|${
         audioArray[i].include.startTime * 1000
       }[s${i}]; `;

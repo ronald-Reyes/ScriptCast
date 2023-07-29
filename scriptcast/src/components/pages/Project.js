@@ -22,13 +22,15 @@ let bottomPanelElem = null;
 export default function Project() {
   const textEditorRef = useRef();
   const playerRef = useRef();
-  const wordCounter = useRef(0);
-  const Panels = useRef([]);
+  const SceneEditorRef = useRef();
+  const AudioEditorRef = useRef();
   const TTSRef = useRef();
   const VideoPreviewer = useRef();
-  const SceneEditorRef = useRef();
+  const TimeRef = useRef();
+
+  const wordCounter = useRef(0);
+  const Panels = useRef([]);
   const currentSceneIndex = useRef();
-  const AudioEditorRef = useRef();
 
   //needed for resize
   const resizer = useRef();
@@ -180,6 +182,7 @@ export default function Project() {
           SceneEditorRef={SceneEditorRef}
           currentSceneIndex={currentSceneIndex}
           AudioEditorRef={AudioEditorRef}
+          TimeRef={TimeRef}
         />
       </div>
     </MainContainer>
@@ -209,6 +212,7 @@ const MainContainer = styled.div`
 
     .TextEditor {
       width: 50%;
+      min-width: 20%;
       resize: horizontal;
     }
     .VidePreViewContainer {
@@ -226,7 +230,7 @@ const MainContainer = styled.div`
     bottom: 0;
     left: 5%;
     width: 90vw;
-    height: 20%;
+    min-height: 10%;
     overflow-y: hidden;
     overflow-x: hidden;
     background: white;
