@@ -1,5 +1,5 @@
+//Code Reviewed
 import React, {
-  useRef,
   useEffect,
   useState,
   useImperativeHandle,
@@ -9,85 +9,88 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import { updateAudioThunk } from "../../thunk/thunk";
 
-const AudioEditor = forwardRef(
-  ({ audioArray, script, VideoPreviewer, onSubmitEdits }, ref) => {
-    const [initialEdits, setInitialEdits] = useState(null);
-    const [currentAudioIndex, setCurrentAudioIndex] = useState();
+const AudioEditor = forwardRef(({ audioArray, onSubmitEdits }, ref) => {
+  const [initialEdits, setInitialEdits] = useState(null);
+  const [currentAudioIndex, setCurrentAudioIndex] = useState();
 
-    useImperativeHandle(ref, () => ({
-      setCurrentAudioIndex,
-    }));
-    useEffect(() => {
-      if (currentAudioIndex != null) {
-        const removedBase64 = { ...audioArray[currentAudioIndex] };
-        delete removedBase64.bin64;
+  useImperativeHandle(ref, () => ({
+    setCurrentAudioIndex,
+  }));
 
-        setInitialEdits({
-          ...removedBase64,
-        });
-      }
-    }, [currentAudioIndex]);
-    useEffect(() => {
-      setCurrentAudioIndex(null);
-    }, [audioArray]);
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      onSubmitEdits(
-        audioArray[currentAudioIndex]._id,
-        currentAudioIndex,
-        initialEdits
-      );
-    };
-    const handleChange = (e) => {
-      if (e.target.name === "include") {
-        const dummyEdits = initialEdits;
-        dummyEdits.include.startTime = Number(e.target.value);
-        setInitialEdits({
-          ...initialEdits,
-          ...dummyEdits,
-        });
-      } else {
-        setInitialEdits({
-          ...initialEdits,
-          [e.target.name]: e.target.value,
-        });
-      }
-    };
-    return (
-      <StyledContainer>
-        {currentAudioIndex !== null && initialEdits && (
-          <form className="AudioEditor" onSubmit={handleSubmit}>
-            <h2 className="title">Audio {currentAudioIndex}</h2>
-            <div>
-              <label>Name:</label>
-              <input
-                type="text"
-                name="name"
-                value={initialEdits.name}
-                onChange={handleChange}
-              />
-            </div>
+  //changes the content of the audio editor panel when currentAudioIndex changes
+  useEffect(() => {
+    if (currentAudioIndex != null) {
+      const removedBase64 = { ...audioArray[currentAudioIndex] };
+      delete removedBase64.bin64;
 
-            <div>
-              <label>Start At (sec):</label>
-              <input
-                type="number"
-                name="include"
-                value={
-                  initialEdits.include.startTime
-                    ? initialEdits.include.startTime
-                    : undefined
-                }
-                onChange={handleChange}
-              />
-            </div>
-            <button type="Submit">Save</button>
-          </form>
-        )}
-      </StyledContainer>
+      setInitialEdits({
+        ...removedBase64,
+      });
+    }
+  }, [currentAudioIndex]);
+
+  //set the currentAudioIndex to null, to prevent error when an audio is removed from the array while it is being selected
+  useEffect(() => {
+    setCurrentAudioIndex(null);
+  }, [audioArray]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmitEdits(
+      audioArray[currentAudioIndex]._id,
+      currentAudioIndex,
+      initialEdits
     );
-  }
-);
+  };
+  const handleChange = (e) => {
+    if (e.target.name === "include") {
+      const dummyEdits = initialEdits;
+      dummyEdits.include.startTime = Number(e.target.value);
+      setInitialEdits({
+        ...initialEdits,
+        ...dummyEdits,
+      });
+    } else {
+      setInitialEdits({
+        ...initialEdits,
+        [e.target.name]: e.target.value,
+      });
+    }
+  };
+  return (
+    <StyledContainer>
+      {currentAudioIndex !== null && initialEdits && (
+        <form className="AudioEditor" onSubmit={handleSubmit}>
+          <h2 className="title">Audio {currentAudioIndex}</h2>
+          <div>
+            <label>Name:</label>
+            <input
+              type="text"
+              name="name"
+              value={initialEdits.name}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div>
+            <label>Start At (sec):</label>
+            <input
+              type="number"
+              name="include"
+              value={
+                initialEdits.include.startTime
+                  ? initialEdits.include.startTime
+                  : undefined
+              }
+              onChange={handleChange}
+            />
+          </div>
+          <button type="Submit">Save</button>
+        </form>
+      )}
+    </StyledContainer>
+  );
+});
 const mapStateToProps = (state) => ({
   script: state.script,
   audioArray: state.audioArray,

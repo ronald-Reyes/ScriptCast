@@ -1,7 +1,9 @@
+//Code Reviewed
 import React from "react";
 import styled from "styled-components";
 import { PiUserCircleGearThin } from "react-icons/pi";
 export default function LeftSideDashboardPanel({ currentUser }) {
+  //This part only shows the current user name in the dashboard
   return (
     <StyledContainer>
       <div className="mainContainer">

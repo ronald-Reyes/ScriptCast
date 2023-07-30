@@ -8,7 +8,7 @@ const videoEncoder = "h264";
 
 module.exports.ffmpegCLI = async (
   images,
-  { projectId, script, audioArray }
+  { projectId, script, audioArray, dateNow }
 ) => {
   try {
     if (projectId === undefined) return;
@@ -56,7 +56,9 @@ module.exports.ffmpegCLI = async (
     let part3 = "";
     let part4 = "";
     const part5 = ` amix=inputs=${audioArray.length}:duration=longest [mixout]"`;
-    const part6 = ` -map ${audioArray.length}:v -map [mixout] -c:v copy -y output/${projectId}.mp4`;
+    const part6 = ` -map ${
+      audioArray.length
+    }:v -map [mixout] -c:v copy -y output/${projectId + "-" + dateNow}.mp4`;
     for (let i = 0; i < audioArray.length; i++) {
       const dataUrl = audioArray[i].bin64;
       const buffer = Buffer.from(dataUrl.split(",")[1], "base64");

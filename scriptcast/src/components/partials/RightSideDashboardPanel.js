@@ -1,3 +1,4 @@
+//Code Reviewed
 import React, { useRef } from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
@@ -24,6 +25,8 @@ export function RightSideDashboardPanel({
   const projectName = useRef();
   const projectCategory = useRef();
   const projectDescription = useRef();
+
+  //handles either creating new project or updating an existing project
   const handleSubmitBtnClick = () => {
     const actionType = pageTitle.current.innerText;
     const name =
@@ -47,9 +50,9 @@ export function RightSideDashboardPanel({
         category,
       });
     }
-
     panel.current.style.display = "none";
   };
+
   return (
     <div>
       <StyledContainer>

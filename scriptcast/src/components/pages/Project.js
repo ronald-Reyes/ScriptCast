@@ -9,15 +9,7 @@ import AudioRecorderPanel from "../player/AudioRecorder";
 import VideoPreview from "../player/VideoPreview";
 import SceneEditor from "../partials/SceneEditor";
 import AudioEditor from "../partials/AudioEditor";
-
 export const PROJECT_PAGE = "PROJECT_PAGE";
-
-let x = 0;
-let y = 0;
-let textEditorWidth = 0;
-let textEditorElem = null;
-let bottomPanelHeight = 0;
-let bottomPanelElem = null;
 
 export default function Project() {
   const textEditorRef = useRef();
@@ -27,14 +19,18 @@ export default function Project() {
   const TTSRef = useRef();
   const VideoPreviewer = useRef();
   const TimeRef = useRef();
-
   const wordCounter = useRef(0);
   const Panels = useRef([]);
   const currentSceneIndex = useRef();
 
-  //needed for resize
+  //Resizer is used to resize the dividing panels from the project page, horizontal resizer and resizer for the timeline at the bottom
   const resizer = useRef();
-
+  let x = 0;
+  let y = 0;
+  let textEditorWidth = 0;
+  let textEditorElem = null;
+  let bottomPanelHeight = 0;
+  let bottomPanelElem = null;
   const Resizer = ({ type }) => {
     return (
       <div

@@ -107,8 +107,8 @@ const mapStateToProps = (state) => ({
   audioArray: state.audioArray,
 });
 const mapDispatchToProps = (dispatch) => ({
-  onDownloadClicked: (images, config) =>
-    dispatch(renderVideoThunk(images, config)),
+  onDownloadClicked: (images, config, navigate) =>
+    dispatch(renderVideoThunk(images, config, navigate)),
 });
 export default connect(mapStateToProps, mapDispatchToProps, null, {
   forwardRef: true,
@@ -196,12 +196,15 @@ const RawFolder = forwardRef(
           </div>
           <div
             onClick={() => {
-              onDownloadClicked(rawImages, {
-                projectId: params.projectId,
-                script,
-                audioArray,
-              });
-              navigate(`/video/${params.projectId}`);
+              onDownloadClicked(
+                rawImages,
+                {
+                  projectId: params.projectId,
+                  script,
+                  audioArray,
+                },
+                navigate
+              );
             }}
           >
             <IoIosSave size={30} />

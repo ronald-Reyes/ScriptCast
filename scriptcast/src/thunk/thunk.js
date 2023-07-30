@@ -464,7 +464,7 @@ export const updateAudioThunk =
     }
   };
 export const renderVideoThunk =
-  (images, config) => async (dispatch, getState) => {
+  (images, config, navigate) => async (dispatch, getState) => {
     try {
       const formData = new FormData();
       for (const image of images) {
@@ -480,6 +480,7 @@ export const renderVideoThunk =
       const res = await response.json();
       if (res.status === true) {
         alert("Video successfully converted, Please reload the page");
+        navigate(`/video/${config.projectId}-${res.nameAppend}`);
       }
     } catch (e) {}
   };

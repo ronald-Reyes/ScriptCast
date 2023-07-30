@@ -9,7 +9,13 @@ export default function VideoDownloadPage() {
     <>
       <Header />
       <StyledContainer>
-        <video width={640} height={360} controls autoPlay>
+        <video
+          width={640}
+          height={360}
+          controls
+          autoPlay
+          crossOrigin="anonymous"
+        >
           <source
             src={`http://localhost:5000/api/video/${params.projectId}`}
             type="video/mp4"

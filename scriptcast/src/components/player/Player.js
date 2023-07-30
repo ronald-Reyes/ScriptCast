@@ -1,3 +1,4 @@
+//needs refractoring
 import React, {
   useImperativeHandle,
   forwardRef,
@@ -23,8 +24,6 @@ const Player = forwardRef(
       VideoPreviewer,
       Panels,
       currentSceneIndex,
-      script,
-      audioArray,
       SceneEditorRef,
       AudioEditorRef,
       TimeRef,
@@ -33,18 +32,20 @@ const Player = forwardRef(
   ) => {
     const count = wordCounter;
     let myInterval;
-    let isPlaying = false;
+
     useImperativeHandle(ref, () => ({
       stopPlayer,
     }));
     function stopPlayer() {
+      TimeRef.current.timerStop();
       clearInterval(myInterval);
-      isPlaying = false;
+
       textEditorRef.current.showLayer2();
     }
     function handlePlayBtn(startCount, time = 500) {
       stopPlayer();
-      isPlaying = true;
+      TimeRef.current.timerPlay();
+
       textEditorRef.current.removeAllMarks();
       textEditorRef.current.removeCurrentHighLight();
       textEditorRef.current.showLayer1();
@@ -78,7 +79,6 @@ const Player = forwardRef(
           <button
             onClick={() => {
               stopPlayer();
-              TimeRef.current.timerStop();
             }}
           >
             <MdStop size={20} />
@@ -86,7 +86,6 @@ const Player = forwardRef(
           <button
             onClick={() => {
               handlePlayBtn(0, 500);
-              TimeRef.current.timerPlay();
             }}
           >
             <VscDebugStart size={20} />
@@ -110,6 +109,19 @@ const Player = forwardRef(
     );
   }
 );
+
+const mapStateToProps = (state) => ({
+  script: state.script,
+  audioArray: state.audioArray,
+});
+const mapDispatchToProps = (dispatch) => ({
+  onDeleteClicked: (_id, index) => dispatch(deleteAudioThunk(_id, index)),
+});
+export default connect(mapStateToProps, null, null, {
+  forwardRef: true,
+})(Player);
+
+//Timeline Component
 const TimeLine = ({
   script,
   audioArray,
@@ -122,6 +134,8 @@ const TimeLine = ({
 }) => {
   const audioSelected = useRef(null);
   const SceneRef = useRef([]);
+
+  //changes the background of the timeline element when script changes
   useEffect(() => {
     SceneRef.current.map((el, i) => {
       if (script.lines[i] !== undefined) {
@@ -131,6 +145,8 @@ const TimeLine = ({
       }
     });
   }, [script]);
+
+  //plays or stops the audio from the timeline
   const handleClick = (audio) => {
     if (audioSelected.current === null) {
       audioSelected.current = new Audio(audio.bin64);
@@ -141,6 +157,29 @@ const TimeLine = ({
     audioSelected.current.pause();
     audioSelected.current = null;
   };
+  //when a scene in the timeline is selected, panel for scene editor will show, and the video preview changes
+  const handleSceneSelect = (e, line, i) => {
+    VideoPreviewer.current.handleNextFrame(line.edits);
+    e.stopPropagation();
+    Panels.current[3].style.display = "flex";
+    Panels.current[0].style.display = "none";
+    Panels.current[1].style.display = "none";
+    Panels.current[2].style.display = "none";
+    Panels.current[4].style.display = "none";
+    currentSceneIndex.current = i;
+    SceneEditorRef.current.setCurrentSceneIndex(i);
+  };
+  //Whem an audio is selected from timeline, panel will appear
+  const handleAudioSelected = (e, i) => {
+    e.stopPropagation();
+    Panels.current[3].style.display = "none";
+    Panels.current[0].style.display = "none";
+    Panels.current[1].style.display = "none";
+    Panels.current[2].style.display = "none";
+    Panels.current[4].style.display = "flex";
+    AudioEditorRef.current.setCurrentAudioIndex(i);
+  };
+
   return (
     <StripContainer>
       <div className="Container">
@@ -156,16 +195,7 @@ const TimeLine = ({
               key={i}
               className="lineStrip"
               onClick={(e) => {
-                VideoPreviewer.current.handleNextFrame(line.edits);
-
-                e.stopPropagation();
-                Panels.current[3].style.display = "flex";
-                Panels.current[0].style.display = "none";
-                Panels.current[1].style.display = "none";
-                Panels.current[2].style.display = "none";
-                Panels.current[4].style.display = "none";
-                currentSceneIndex.current = i;
-                SceneEditorRef.current.setCurrentSceneIndex(i);
+                handleSceneSelect(e, line, i);
               }}
             >
               <span>{Math.round(line.edits.duration / 1000)} sec</span>
@@ -181,13 +211,7 @@ const TimeLine = ({
               key={i}
               className="audioStrip"
               onClick={(e) => {
-                e.stopPropagation();
-                Panels.current[3].style.display = "none";
-                Panels.current[0].style.display = "none";
-                Panels.current[1].style.display = "none";
-                Panels.current[2].style.display = "none";
-                Panels.current[4].style.display = "flex";
-                AudioEditorRef.current.setCurrentAudioIndex(i);
+                handleAudioSelected(e, i);
               }}
             >
               <div>
@@ -232,20 +256,9 @@ const TimeLine = ({
   );
 };
 
-const mapStateToProps = (state) => ({
-  script: state.script,
-  audioArray: state.audioArray,
-});
-const mapDispatchToProps = (dispatch) => ({
-  onDeleteClicked: (_id, index) => dispatch(deleteAudioThunk(_id, index)),
-});
 const TimeLineConnect = connect(mapStateToProps, mapDispatchToProps, null, {
   forwardRef: true,
 })(TimeLine);
-
-export default connect(mapStateToProps, null, null, {
-  forwardRef: true,
-})(Player);
 
 const StyledContainer = styled.div`
   .PlayerBtns {

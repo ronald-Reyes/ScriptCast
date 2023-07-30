@@ -1,3 +1,4 @@
+//Code Reviewed
 import React from "react";
 import { connect } from "react-redux";
 import { clearCurrentUser } from "../../redux/actions";
@@ -16,6 +17,32 @@ import { PROJECT_PAGE } from "../pages/Project";
 
 function Header({ onClearCurrentUser, type, Panels }) {
   const navigate = useNavigate();
+
+  //Switches the panels selected
+  const handleTTSBtnClicked = (e) => {
+    e.stopPropagation();
+    Panels.current[0].style.display = "flex";
+    Panels.current[1].style.display = "none";
+    Panels.current[2].style.display = "none";
+    Panels.current[3].style.display = "none";
+    Panels.current[4].style.display = "none";
+  };
+  const handleAudioRecorderBtnClicked = (e) => {
+    e.stopPropagation();
+    Panels.current[0].style.display = "none";
+    Panels.current[1].style.display = "flex";
+    Panels.current[2].style.display = "none";
+    Panels.current[3].style.display = "none";
+    Panels.current[4].style.display = "none";
+  };
+  const handleUploadBtnClicked = (e) => {
+    e.stopPropagation();
+    Panels.current[2].style.display = "flex";
+    Panels.current[0].style.display = "none";
+    Panels.current[1].style.display = "none";
+    Panels.current[3].style.display = "none";
+    Panels.current[4].style.display = "none";
+  };
   return (
     <StyledContainer>
       <header className="Header">
@@ -38,40 +65,13 @@ function Header({ onClearCurrentUser, type, Panels }) {
           {type === PROJECT_PAGE && (
             <div className="recorderOptionsContainer">
               <div className="recorderOptions">
-                <div
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    Panels.current[0].style.display = "flex";
-                    Panels.current[1].style.display = "none";
-                    Panels.current[2].style.display = "none";
-                    Panels.current[3].style.display = "none";
-                    Panels.current[4].style.display = "none";
-                  }}
-                >
+                <div onClick={handleTTSBtnClicked}>
                   <TbSpeakerphone size={22} />
                 </div>
-                <div
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    Panels.current[0].style.display = "none";
-                    Panels.current[1].style.display = "flex";
-                    Panels.current[2].style.display = "none";
-                    Panels.current[3].style.display = "none";
-                    Panels.current[4].style.display = "none";
-                  }}
-                >
+                <div onClick={handleAudioRecorderBtnClicked}>
                   <PiRecordFill size={22} />
                 </div>
-                <div
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    Panels.current[2].style.display = "flex";
-                    Panels.current[0].style.display = "none";
-                    Panels.current[1].style.display = "none";
-                    Panels.current[3].style.display = "none";
-                    Panels.current[4].style.display = "none";
-                  }}
-                >
+                <div onClick={handleUploadBtnClicked}>
                   <RiFolderUploadLine size={22} />
                 </div>
               </div>

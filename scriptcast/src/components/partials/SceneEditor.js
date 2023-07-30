@@ -1,5 +1,5 @@
+//Code Reviewed
 import React, {
-  useRef,
   useEffect,
   useState,
   useImperativeHandle,
@@ -10,19 +10,15 @@ import { connect } from "react-redux";
 import { updateEditsThunk } from "../../thunk/thunk";
 
 const SceneEditor = forwardRef(
-  ({ audioArray, script, VideoPreviewer, onSubmitEdits }, ref) => {
+  ({ script, VideoPreviewer, onSubmitEdits }, ref) => {
     const [initialEdits, setInitialEdits] = useState({});
-
     const [currentSceneIndex, setCurrentSceneIndex] = useState();
 
     useImperativeHandle(ref, () => ({
       setCurrentSceneIndex,
     }));
-    useEffect(() => {
-      if (initialEdits) {
-        VideoPreviewer.current.handleNextFrame(initialEdits);
-      }
-    }, [initialEdits]);
+
+    //Initialiaze initial edits when the current scene index selected changes
     useEffect(() => {
       if (currentSceneIndex != null) {
         setInitialEdits({
@@ -32,6 +28,8 @@ const SceneEditor = forwardRef(
         });
       }
     }, [currentSceneIndex]);
+
+    //Save the final changes when save button is clicked
     const handleSubmit = (e) => {
       e.preventDefault();
 
@@ -40,6 +38,8 @@ const SceneEditor = forwardRef(
 
       onSubmitEdits(script._id, currentSceneIndex, dummyLine);
     };
+
+    //Reflect initial changes in the video preview
     const handleChange = (e) => {
       if (e.target.name === "x" || e.target.name === "y") {
         initialEdits.position[e.target.name] = Number(e.target.value);
@@ -68,6 +68,12 @@ const SceneEditor = forwardRef(
         });
       }
     };
+    useEffect(() => {
+      if (initialEdits) {
+        VideoPreviewer.current.handleNextFrame(initialEdits);
+      }
+    }, [initialEdits]);
+
     return (
       <StyledContainer>
         {currentSceneIndex != null && (
