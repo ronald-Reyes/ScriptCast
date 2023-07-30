@@ -1,3 +1,4 @@
+//Code Reviewed
 import React, {
   useState,
   useEffect,
@@ -8,19 +9,18 @@ import React, {
 import styled from "styled-components";
 import { connect } from "react-redux";
 
-const TTS = forwardRef(({ textInput }, ref) => {
+const TTS = forwardRef(({}, ref) => {
   const [isPaused, setIsPaused] = useState(false);
-  const [utterance, setUtterance] = useState(null);
   const [voice, setVoice] = useState(null);
   const [pitch, setPitch] = useState(1);
   const [rate, setRate] = useState(1);
   const [volume, setVolume] = useState(1);
   const [text, setText] = useState(
-    "You can edit the text here and click the play button, or click any line on the text editor to load the text"
+    "Welcome to scriptcast, make things at your own style."
   );
   const textElement = useRef();
-  //textInput.current = text;
 
+  //These methods can be used outside this component
   useImperativeHandle(ref, () => ({
     setText,
     handlePlay,
@@ -28,29 +28,26 @@ const TTS = forwardRef(({ textInput }, ref) => {
     handleStop,
   }));
 
+  //Loads initial STT configuration when the page is first loaded
   useEffect(() => {
     const synth = window.speechSynthesis;
-    const u = new SpeechSynthesisUtterance(textElement.current.value);
     const voices = synth.getVoices();
-
-    setUtterance(u);
-    setVoice(voices[0]);
+    setVoice(voices[1]);
   }, []);
+
+  //restarts TTS every time there are changes in the specified state variables
   useEffect(() => {
-    const synth = window.speechSynthesis;
-    const u = new SpeechSynthesisUtterance(textElement.current.value);
-    setUtterance(u);
-    return () => {
+    if (text && voice && pitch && rate && volume) {
+      const synth = window.speechSynthesis;
       synth.cancel();
-    };
+      handlePlay();
+    }
   }, [text, voice, pitch, rate, volume]);
 
+  //Sets other config for speech synthesis and calls the speak method when conditions are met
   const handlePlay = () => {
-    console.log(text);
-
     const synth = window.speechSynthesis;
-    const u = new SpeechSynthesisUtterance(text);
-    setUtterance(u);
+    const utterance = new SpeechSynthesisUtterance(textElement.current.value);
     if (isPaused) {
       synth.resume();
     } else {
@@ -61,23 +58,18 @@ const TTS = forwardRef(({ textInput }, ref) => {
       utterance.volume = volume;
       synth.speak(utterance);
     }
-
     setIsPaused(false);
   };
 
   const handlePause = () => {
     const synth = window.speechSynthesis;
-
     synth.pause();
-
     setIsPaused(true);
   };
 
   const handleStop = () => {
     const synth = window.speechSynthesis;
-
     synth.cancel();
-
     setIsPaused(false);
   };
 
@@ -182,9 +174,7 @@ const TTS = forwardRef(({ textInput }, ref) => {
   );
 });
 
-const mapStateToProps = (state) => ({});
-const mapDispatchToProps = (dispatch) => ({});
-export default connect(mapStateToProps, mapDispatchToProps, null, {
+export default connect(null, null, null, {
   forwardRef: true,
 })(TTS);
 

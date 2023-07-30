@@ -1,3 +1,4 @@
+//Code Reviewed
 import * as React from "react";
 import { AudioRecorder, useAudioRecorder } from "react-audio-voice-recorder";
 import styled from "styled-components";
@@ -9,6 +10,8 @@ function AudioRecorderPanel({ onUploadClicked }) {
   const params = useParams();
   const fileBlob = React.useRef();
   const recorder = React.useRef();
+
+  //Initialize audiorecorder controls to be passed in the AudioRecorder object
   const recorderControls = useAudioRecorder(
     {
       noiseSuppression: true,
@@ -16,6 +19,18 @@ function AudioRecorderPanel({ onUploadClicked }) {
     },
     (err) => console.table(err)
   );
+
+  //Creates an objectURL and assign to the audio element
+  const handleOutput = (blob) => {
+    const url = URL.createObjectURL(blob);
+    fileBlob.current = blob;
+    if (recorder.current !== undefined) {
+      recorder.current.src = url;
+      recorder.current.controls = true;
+    }
+  };
+
+  //Upload handler
   const handleUpload = () => {
     if (fileBlob.current) {
       onUploadClicked(
@@ -26,14 +41,6 @@ function AudioRecorderPanel({ onUploadClicked }) {
       return;
     }
     alert("Please Start Recording");
-  };
-  const handleOutput = (blob) => {
-    const url = URL.createObjectURL(blob);
-    fileBlob.current = blob;
-    if (recorder.current !== undefined) {
-      recorder.current.src = url;
-      recorder.current.controls = true;
-    }
   };
 
   return (
@@ -53,7 +60,6 @@ function AudioRecorderPanel({ onUploadClicked }) {
     </StyledContainer>
   );
 }
-
 const mapDispatchToProps = (dispatch) => ({
   onUploadClicked: (projectId, name, bin64) =>
     dispatch(uploadRecordedThunk(projectId, name, bin64)),

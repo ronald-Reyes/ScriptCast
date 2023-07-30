@@ -18,12 +18,14 @@ export const Time = forwardRef(
     const mainTimer = useRef();
     const audio = useRef([]);
 
+    //Methods that can be used outside this component
     useImperativeHandle(ref, () => ({
       timerPlay,
       timerPause,
       timerStop,
     }));
 
+    //Recomputes the time using setInterval and plays the frame and audio
     const timerPlay = () => {
       if (!mainTimer.current)
         mainTimer.current = setInterval(() => {
@@ -36,25 +38,15 @@ export const Time = forwardRef(
             mainTimer.current = null;
             audio.current = [];
           }
-          //Play next frame
-          let sumTime = 0;
-          for (let i = 0; i < script.lines.length; i++) {
-            sumTime += script.lines[i].edits.duration / 1000;
-            if (sumTime > timeRef.current) {
-              VideoPreviewer.current.handleNextFrame(script.lines[i].edits);
-              break;
-            }
-          }
-          //Play audio at specified start time
-          for (let i = 0; i < audioArray.length; i++) {
-            if (audioArray[i].include.startTime === timeRef.current) {
-              audio.current[i] = new Audio(audioArray[i].bin64);
-              audio.current[i].play();
-            }
-          }
+          //Play frame
+          playFrame();
+          //Play audio
+          playAudio();
         }, 1000);
     };
     const timerStop = () => {
+      playFrame();
+      stopAudio();
       clearInterval(mainTimer.current);
       mainTimer.current = null;
       setTime(0);
@@ -64,6 +56,34 @@ export const Time = forwardRef(
       clearInterval(mainTimer.current);
       mainTimer.current = null;
     };
+    const playFrame = () => {
+      let sumTime = 0;
+      for (let i = 0; i < script.lines.length; i++) {
+        sumTime += script.lines[i].edits.duration / 1000;
+        if (sumTime > timeRef.current) {
+          VideoPreviewer.current.handleNextFrame(script.lines[i].edits);
+          break;
+        }
+      }
+    };
+    const playAudio = () => {
+      for (let i = 0; i < audioArray.length; i++) {
+        if (audioArray[i].include.startTime === timeRef.current) {
+          audio.current[i] = new Audio(audioArray[i].bin64);
+          audio.current[i].play();
+        }
+      }
+    };
+    const stopAudio = () => {
+      for (let i = 0; i < audio.current.length; i++) {
+        if (audio.current[i] !== null) {
+          audio.current[i].pause();
+          audio.current[i] = null;
+        }
+      }
+    };
+
+    //changes the maximum time every changes in script
     useEffect(() => {
       if (script) {
         let sum = 0;
@@ -74,6 +94,7 @@ export const Time = forwardRef(
       }
     }, [script]);
 
+    //Updates the displayed time every time the state "time" changes
     useEffect(() => {
       const hourVal = Math.floor(time / 3600);
       const minVal = Math.floor((time % 3600) / 60);
@@ -92,6 +113,7 @@ export const Time = forwardRef(
           : secVal.toString(),
       ]);
     }, [time]);
+
     return (
       //<div className='Time'>00:00:00</div>
       <StyledContainer>
@@ -100,11 +122,11 @@ export const Time = forwardRef(
     );
   }
 );
+
 const mapStateToProps = (state) => ({
   script: state.script,
   audioArray: state.audioArray,
 });
-
 export default connect(mapStateToProps, null, null, {
   forwardRef: true,
 })(Time);

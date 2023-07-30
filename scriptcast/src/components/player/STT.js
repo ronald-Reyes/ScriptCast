@@ -1,3 +1,4 @@
+//Code Reviewed
 import React, { useEffect } from "react";
 import SpeechRecognition, {
   useSpeechRecognition,
@@ -20,17 +21,23 @@ function STT({
   const {
     transcript,
     listening,
-    resetTranscript,
+    //resetTranscript,
     browserSupportsSpeechRecognition,
   } = useSpeechRecognition();
-  SST.current = SpeechRecognition;
 
+  //lifts the speechRecognition object to its parent component
+  SST.current = SpeechRecognition;
+  isListening.current = listening;
+
+  //Appends the line text with the transcript text
   useEffect(() => {
     if (selected.current) {
       selected.current.firstChild.innerText =
         prevText.current + " " + transcript;
     }
   }, [transcript]);
+
+  //Saves the new line every time the mic is not listening
   useEffect(() => {
     if (listening === false && selected.current) {
       onUpdateScriptLine(
@@ -41,7 +48,7 @@ function STT({
     }
   }, [listening]);
 
-  isListening.current = listening;
+  //check the browser's SST compatability
   if (!browserSupportsSpeechRecognition) {
     return <span>Does not support STT...</span>;
   }

@@ -1,3 +1,4 @@
+//Code Reviewed
 import React, {
   useRef,
   useEffect,
@@ -12,17 +13,23 @@ import { FaImages } from "react-icons/fa";
 import { IoIosSave } from "react-icons/io";
 import { renderVideoThunk } from "../../thunk/thunk";
 import { useNavigate, useParams } from "react-router-dom";
+const MAIN_CANVAS = "MAIN_CANVAS";
+const RAW_FOLDER_CANVAS = "RAW_FOLDER_CANVAS";
 
+//VideoPreview Component
 const VideoPreview = forwardRef(
   ({ script, audioArray, onDownloadClicked }, ref) => {
     const canvas = useRef();
     const frameCount = useRef(0);
     const lastFrame = useRef();
+    const rawFolderCanvasRef = useRef();
 
+    //Method that is used outside this component
     useImperativeHandle(ref, () => ({
       handleNextFrame,
     }));
 
+    //Initializes the first frame of video previewer, it is the scripcast logo
     useEffect(() => {
       const text = "ScriptCast";
       const position = {
@@ -38,6 +45,8 @@ const VideoPreview = forwardRef(
         lastFrame.current = canvas.current.toDataURL("image/png");
       };
     }, []);
+
+    //This method changes the current frame by filling the whole canvas and adding the text
     const handleNextFrame = ({
       bgcolor = "black",
       fontcolor = "white",
@@ -53,13 +62,21 @@ const VideoPreview = forwardRef(
       fillBackground(bgcolor);
       writeText(fontcolor, font, text, position);
     };
-    const fillBackground = (color) => {
-      const ctx = canvas.current.getContext("2d");
+
+    const fillBackground = (color, type = MAIN_CANVAS) => {
+      let ctx;
+      if (type === MAIN_CANVAS) ctx = canvas.current.getContext("2d");
+      else if (type === RAW_FOLDER_CANVAS)
+        ctx = rawFolderCanvasRef.current.getContext("2d");
       ctx.fillStyle = color;
       ctx.fillRect(0, 0, canvas.current.width, canvas.current.height);
     };
-    const writeText = (fontcolor, font, text, position) => {
-      const ctx = canvas.current.getContext("2d");
+
+    const writeText = (fontcolor, font, text, position, type = MAIN_CANVAS) => {
+      let ctx;
+      if (type === MAIN_CANVAS) ctx = canvas.current.getContext("2d");
+      else if (type === RAW_FOLDER_CANVAS)
+        ctx = rawFolderCanvasRef.current.getContext("2d");
       ctx.fillStyle = fontcolor;
       ctx.font = font;
       ctx.fillText(text, position.x, position.y);
@@ -77,90 +94,11 @@ const VideoPreview = forwardRef(
           onDownloadClicked={onDownloadClicked}
           lastFrame={lastFrame}
           audioArray={audioArray}
+          fillBackground={fillBackground}
+          writeText={writeText}
+          rawFolderCanvasRef={rawFolderCanvasRef}
         />
       </StyledContainer>
-    );
-  }
-);
-
-const RawFolder = forwardRef(
-  ({ script, onDownloadClicked, lastFrame, audioArray }, ref) => {
-    const [rawImages, setRawImages] = useState([]);
-    const RenderCanvas = useRef(document.createElement("canvas"));
-    const imagesContainer = useRef();
-    const params = useParams();
-    const navigate = useNavigate();
-
-    useImperativeHandle(ref, () => ({
-      setRawImages,
-    }));
-    useEffect(() => {
-      RenderCanvas.current.width = 640;
-      RenderCanvas.current.height = 360;
-      const raw = [];
-      script.lines.map((scene, i) => {
-        const { bgcolor, fontcolor, font, text, position } = scene.edits;
-        fillBackground(bgcolor);
-        writeText(fontcolor, font, text, position);
-        raw[i] = RenderCanvas.current.toDataURL("image/png");
-      });
-      raw.push(lastFrame.current);
-
-      setRawImages(raw);
-    }, [script]);
-
-    const fillBackground = (bgcolor) => {
-      const ctx = RenderCanvas.current.getContext("2d");
-      ctx.fillStyle = bgcolor;
-      ctx.fillRect(
-        0,
-        0,
-        RenderCanvas.current.width,
-        RenderCanvas.current.height
-      );
-    };
-    const writeText = (fontcolor, font, text, position) => {
-      const ctx = RenderCanvas.current.getContext("2d");
-      ctx.fillStyle = fontcolor;
-      ctx.font = font;
-      ctx.fillText(text, position.x, position.y);
-    };
-    return (
-      <div>
-        <div className="previewBtns">
-          <div
-            className="RawFolder"
-            onClick={() => {
-              imagesContainer.current.style.display === "none"
-                ? (imagesContainer.current.style.display = "block")
-                : (imagesContainer.current.style.display = "none");
-            }}
-          >
-            <FaImages size={30} />
-          </div>
-          <div
-            onClick={() => {
-              onDownloadClicked(rawImages, {
-                projectId: params.projectId,
-                script,
-                audioArray,
-              });
-              navigate(`/video/${params.projectId}`);
-            }}
-          >
-            <IoIosSave size={30} />
-          </div>
-        </div>
-
-        <RawFolderStyled ref={imagesContainer}>
-          <div className="Images">
-            {rawImages.map((rawImage, i) => {
-              return <img key={i} src={rawImage} alt="imageObject" />;
-            })}
-          </div>
-          <div className="SpaceBottom"></div>
-        </RawFolderStyled>
-      </div>
     );
   }
 );
@@ -201,3 +139,84 @@ const RawFolderStyled = styled.div`
     gap: 5px;
   }
 `;
+
+//RawFolder component
+//Contains the raw images
+const RawFolder = forwardRef(
+  (
+    {
+      script,
+      onDownloadClicked,
+      lastFrame,
+      audioArray,
+      fillBackground,
+      writeText,
+      rawFolderCanvasRef,
+    },
+    ref
+  ) => {
+    const [rawImages, setRawImages] = useState([]);
+    const RenderCanvas = useRef(document.createElement("canvas"));
+    rawFolderCanvasRef.current = RenderCanvas.current;
+    const imagesContainer = useRef();
+    const params = useParams();
+    const navigate = useNavigate();
+
+    useImperativeHandle(ref, () => ({
+      setRawImages,
+    }));
+
+    //sets the raw images when there are changes in the script state
+    useEffect(() => {
+      RenderCanvas.current.width = 640;
+      RenderCanvas.current.height = 360;
+      const raw = [];
+      script.lines.map((scene, i) => {
+        const { bgcolor, fontcolor, font, text, position } = scene.edits;
+        fillBackground(bgcolor, RAW_FOLDER_CANVAS);
+        writeText(fontcolor, font, text, position, RAW_FOLDER_CANVAS);
+        raw[i] = RenderCanvas.current.toDataURL("image/png");
+      });
+      raw.push(lastFrame.current);
+      setRawImages(raw);
+    }, [script]);
+
+    return (
+      <div>
+        <div className="previewBtns">
+          <div
+            className="RawFolder"
+            onClick={() => {
+              imagesContainer.current.style.display === "none"
+                ? (imagesContainer.current.style.display = "block")
+                : (imagesContainer.current.style.display = "none");
+            }}
+          >
+            <FaImages size={30} />
+          </div>
+          <div
+            onClick={() => {
+              onDownloadClicked(rawImages, {
+                projectId: params.projectId,
+                script,
+                audioArray,
+              });
+              navigate(`/video/${params.projectId}`);
+            }}
+          >
+            <IoIosSave size={30} />
+          </div>
+        </div>
+
+        <RawFolderStyled ref={imagesContainer}>
+          <div className="Images">
+            {rawImages.map((rawImage, i) => {
+              return <img key={i} src={rawImage} alt="imageObject" />;
+            })}
+          </div>
+          <div className="SpaceBottom"></div>
+        </RawFolderStyled>
+      </div>
+    );
+  }
+);
