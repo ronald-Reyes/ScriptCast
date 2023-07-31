@@ -135,7 +135,7 @@ export default connect(mapStateToProps, null, null, {
 })(Time);
 
 const StyledContainer = styled.div`
-  background: rgba(0, 0, 255, 0.5);
+  background: #2196f3;
   display: flex;
   justify-content: center;
 `;

@@ -18,7 +18,7 @@ const RAW_FOLDER_CANVAS = "RAW_FOLDER_CANVAS";
 
 //VideoPreview Component
 const VideoPreview = forwardRef(
-  ({ script, audioArray, onDownloadClicked, playerRef }, ref) => {
+  ({ script, audioArray, onDownloadClicked, playerRef, rawImagesRef }, ref) => {
     const canvas = useRef();
     const frameCount = useRef(0);
     const lastFrame = useRef();
@@ -98,6 +98,7 @@ const VideoPreview = forwardRef(
           writeText={writeText}
           rawFolderCanvasRef={rawFolderCanvasRef}
           playerRef={playerRef}
+          rawImagesRef={rawImagesRef}
         />
       </StyledContainer>
     );
@@ -154,6 +155,7 @@ const RawFolder = forwardRef(
       writeText,
       rawFolderCanvasRef,
       playerRef,
+      rawImagesRef,
     },
     ref
   ) => {
@@ -163,6 +165,7 @@ const RawFolder = forwardRef(
     const imagesContainer = useRef();
     const params = useParams();
     const navigate = useNavigate();
+    rawImagesRef.current = rawImages;
 
     useImperativeHandle(ref, () => ({
       setRawImages,

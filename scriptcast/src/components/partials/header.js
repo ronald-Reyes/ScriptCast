@@ -2,7 +2,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { clearCurrentUser } from "../../redux/actions";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import logo from "../../images/ScriptCastLogo.png";
 import { CiLogout } from "react-icons/ci";
 import { TiUser } from "react-icons/ti";
@@ -14,9 +14,20 @@ import { RiFolderUploadLine } from "react-icons/ri";
 import styled from "styled-components";
 import { DASHBOARD_PAGE } from "../pages/Dashboard";
 import { PROJECT_PAGE } from "../pages/Project";
+import { renderVideoThunk } from "../../thunk/thunk";
 
-function Header({ onClearCurrentUser, type, Panels, playerRef }) {
+function Header({
+  onClearCurrentUser,
+  type,
+  Panels,
+  playerRef,
+  onDownloadClicked,
+  rawImagesRef,
+  script,
+  audioArray,
+}) {
   const navigate = useNavigate();
+  const params = useParams();
 
   //Switches the panels selected
   const handleTTSBtnClicked = (e) => {
@@ -82,6 +93,25 @@ function Header({ onClearCurrentUser, type, Panels, playerRef }) {
           )}
           <nav>
             <ul className="">
+              {type === PROJECT_PAGE && (
+                <button
+                  className="PublishBtn"
+                  onClick={() => {
+                    playerRef.current.stopPlayer();
+                    onDownloadClicked(
+                      rawImagesRef.current,
+                      {
+                        projectId: params.projectId,
+                        script,
+                        audioArray,
+                      },
+                      navigate
+                    );
+                  }}
+                >
+                  Publish
+                </button>
+              )}
               {type !== DASHBOARD_PAGE && (
                 <li>
                   <a
@@ -109,18 +139,6 @@ function Header({ onClearCurrentUser, type, Panels, playerRef }) {
                   <CiLogout size={30} />
                 </a>
               </li>
-              <li className="menu-container">
-                <div className="UserIcon">
-                  <div>
-                    <TiUser size={30} />
-                  </div>
-                </div>
-                <div className="menu">
-                  <a href="/">Profile</a>
-                  <a href="/">option2</a>
-                  <a href="/">option3</a>
-                </div>
-              </li>
             </ul>
           </nav>
         </div>
@@ -130,9 +148,13 @@ function Header({ onClearCurrentUser, type, Panels, playerRef }) {
 }
 const mapStateToProps = (state) => ({
   currentUser: state.user.user,
+  script: state.script.present,
+  audioArray: state.audioArray,
 });
 const mapDispatchToProps = (dispatch) => ({
   onClearCurrentUser: () => dispatch(clearCurrentUser()),
+  onDownloadClicked: (images, config, navigate) =>
+    dispatch(renderVideoThunk(images, config, navigate)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Header);
 
@@ -199,19 +221,14 @@ const StyledContainer = styled.div`
           padding: 1rem;
           display: inline-block;
         }
-        .menu-container {
-          position: relative;
-
-          .UserIcon {
-            display: flex;
-            flex-direction: column;
-          }
-          .menu {
-            position: absolute;
-            z-index: 1;
-            background: whitesmoke;
-            display: none;
-          }
+        .PublishBtn {
+          cursor: pointer;
+          background: #2196f3;
+          color: white;
+          font-weight: bold;
+          padding: 8px 15px;
+          border: none;
+          border-radius: 50px;
         }
       }
     }

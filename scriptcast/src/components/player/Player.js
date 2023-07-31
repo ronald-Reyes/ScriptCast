@@ -279,7 +279,7 @@ const StyledContainer = styled.div`
     justify-content: center;
     padding: 5px;
     border-bottom: 1px solid grey;
-    background: rgba(0, 0, 255, 0.5);
+    background: #2196f3;
   }
   button {
     cursor: pointer;

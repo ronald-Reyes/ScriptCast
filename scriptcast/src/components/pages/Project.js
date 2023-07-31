@@ -24,6 +24,7 @@ function Project({ onUndo, onRedo }) {
   const wordCounter = useRef(0);
   const Panels = useRef([]);
   const currentSceneIndex = useRef();
+  const rawImagesRef = useRef();
 
   //Resizer is used to resize the dividing panels from the project page, horizontal resizer and resizer for the timeline at the bottom
   const resizer = useRef();
@@ -110,7 +111,12 @@ function Project({ onUndo, onRedo }) {
       }}
     >
       <div className="TopSection">
-        <Header type={PROJECT_PAGE} Panels={Panels} playerRef={playerRef} />
+        <Header
+          type={PROJECT_PAGE}
+          Panels={Panels}
+          playerRef={playerRef}
+          rawImagesRef={rawImagesRef}
+        />
         <div
           className="panel TTSContainer"
           ref={(el) => {
@@ -184,7 +190,11 @@ function Project({ onUndo, onRedo }) {
         </div>
         <Resizer type="horizontal" />
         <div className="VidePreViewContainer">
-          <VideoPreview ref={VideoPreviewer} playerRef={playerRef} />
+          <VideoPreview
+            ref={VideoPreviewer}
+            playerRef={playerRef}
+            rawImagesRef={rawImagesRef}
+          />
         </div>
       </div>
       <div className="BottomSection">
@@ -272,7 +282,7 @@ const MainContainer = styled.div`
   .resizer.vertical {
     width: 100%;
     height: 10px;
-    background: rgba(0, 0, 255, 0.5);
+    background: #2196f3;
     display: hidden;
     &:hover {
       cursor: row-resize;
