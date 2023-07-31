@@ -92,14 +92,14 @@ const initScript = {
       edits: {
         bgcolor: "black",
         fontcolor: "white",
-        text: "",
+        text: "Text",
         position: {
           x: 320,
           y: 180,
         },
         font: "30px Arial",
         recordingId: "",
-        duration: 5000,
+        duration: 15000,
       },
     },
   ],
@@ -134,14 +134,14 @@ export const script = (state = initScript, action) => {
           edits: {
             bgcolor: "black",
             fontcolor: "white",
-            text: "",
+            text: "Text",
             position: {
               x: 320,
               y: 180,
             },
             font: "30px Arial",
             recordingId: "",
-            duration: 5000,
+            duration: 2000,
           },
         },
         index

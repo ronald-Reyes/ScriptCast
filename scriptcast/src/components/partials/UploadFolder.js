@@ -12,6 +12,7 @@ import {
   uploadAudioThunk,
 } from "../../thunk/thunk";
 import { useParams } from "react-router-dom";
+import { IoCloseCircleOutline } from "react-icons/io5";
 
 //Upload Folder
 function UploadFolder({
@@ -19,6 +20,7 @@ function UploadFolder({
   onSynchClicked,
   onDeleteClicked,
   currentUser,
+  Panels,
 }) {
   const params = useParams();
   const audioSelected = useRef(null);
@@ -41,10 +43,20 @@ function UploadFolder({
     audioSelected.current.pause();
     audioSelected.current = null;
   };
+  const handleCloseBtn = () => {
+    Panels.current[0].style.display = "none";
+    Panels.current[1].style.display = "none";
+    Panels.current[2].style.display = "none";
+    Panels.current[3].style.display = "none";
+    Panels.current[4].style.display = "none";
+  };
 
   return (
     <StyledContainer>
       <div className="UploadFiles">
+        <div className="close" onClick={handleCloseBtn}>
+          <IoCloseCircleOutline size={20} color="red" />
+        </div>
         <h3 className="title">Upload Audio File</h3>
         <AudioUploaderConnect />
         {audioArray.map((audio, i) => {
@@ -99,7 +111,11 @@ const StyledContainer = styled.div`
   z-index: 1;
   background: white;
   box-shadow: -1px 5px 5px 5px rgba(128, 128, 128, 0.4);
-
+  .close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
   .UploadFiles {
     display: flex;
     flex-direction: column;

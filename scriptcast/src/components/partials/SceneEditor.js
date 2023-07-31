@@ -8,9 +8,10 @@ import React, {
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { updateEditsThunk } from "../../thunk/thunk";
+import { IoCloseCircleOutline } from "react-icons/io5";
 
 const SceneEditor = forwardRef(
-  ({ script, VideoPreviewer, onSubmitEdits }, ref) => {
+  ({ script, VideoPreviewer, onSubmitEdits, Panels }, ref) => {
     const [initialEdits, setInitialEdits] = useState({});
     const [currentSceneIndex, setCurrentSceneIndex] = useState();
 
@@ -74,10 +75,21 @@ const SceneEditor = forwardRef(
       }
     }, [initialEdits]);
 
+    const handleCloseBtn = () => {
+      Panels.current[0].style.display = "none";
+      Panels.current[1].style.display = "none";
+      Panels.current[2].style.display = "none";
+      Panels.current[3].style.display = "none";
+      Panels.current[4].style.display = "none";
+    };
+
     return (
       <StyledContainer>
         {currentSceneIndex != null && (
           <form className="SceneEditor" onSubmit={handleSubmit}>
+            <div className="close" onClick={handleCloseBtn}>
+              <IoCloseCircleOutline size={20} color="red" />
+            </div>
             <h2 className="title">Scene {currentSceneIndex}</h2>
             <div>
               <label>Background Color:</label>
@@ -166,7 +178,11 @@ const StyledContainer = styled.div`
   z-index: 1;
   background: white;
   box-shadow: -1px 5px 5px 5px rgba(128, 128, 128, 0.4);
-
+  .close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
   .SceneEditor {
     display: flex;
     flex-direction: column;

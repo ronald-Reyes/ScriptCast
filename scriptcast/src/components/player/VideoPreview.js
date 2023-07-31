@@ -18,7 +18,7 @@ const RAW_FOLDER_CANVAS = "RAW_FOLDER_CANVAS";
 
 //VideoPreview Component
 const VideoPreview = forwardRef(
-  ({ script, audioArray, onDownloadClicked }, ref) => {
+  ({ script, audioArray, onDownloadClicked, playerRef }, ref) => {
     const canvas = useRef();
     const frameCount = useRef(0);
     const lastFrame = useRef();
@@ -97,6 +97,7 @@ const VideoPreview = forwardRef(
           fillBackground={fillBackground}
           writeText={writeText}
           rawFolderCanvasRef={rawFolderCanvasRef}
+          playerRef={playerRef}
         />
       </StyledContainer>
     );
@@ -152,6 +153,7 @@ const RawFolder = forwardRef(
       fillBackground,
       writeText,
       rawFolderCanvasRef,
+      playerRef,
     },
     ref
   ) => {
@@ -187,6 +189,7 @@ const RawFolder = forwardRef(
           <div
             className="RawFolder"
             onClick={() => {
+              playerRef.current.stopPlayer();
               imagesContainer.current.style.display === "none"
                 ? (imagesContainer.current.style.display = "block")
                 : (imagesContainer.current.style.display = "none");
@@ -196,6 +199,7 @@ const RawFolder = forwardRef(
           </div>
           <div
             onClick={() => {
+              playerRef.current.stopPlayer();
               onDownloadClicked(
                 rawImages,
                 {

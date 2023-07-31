@@ -145,6 +145,7 @@ const TextEditor = forwardRef(
                     title.current = el;
                   }}
                   onBlur={() => {
+                    playerRef.current.stopPlayer();
                     onUpdateScriptTitle(script._id, title.current.innerText);
                   }}
                 >

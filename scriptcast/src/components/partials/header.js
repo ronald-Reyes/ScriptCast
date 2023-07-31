@@ -15,11 +15,12 @@ import styled from "styled-components";
 import { DASHBOARD_PAGE } from "../pages/Dashboard";
 import { PROJECT_PAGE } from "../pages/Project";
 
-function Header({ onClearCurrentUser, type, Panels }) {
+function Header({ onClearCurrentUser, type, Panels, playerRef }) {
   const navigate = useNavigate();
 
   //Switches the panels selected
   const handleTTSBtnClicked = (e) => {
+    playerRef.current.stopPlayer();
     e.stopPropagation();
     Panels.current[0].style.display = "flex";
     Panels.current[1].style.display = "none";
@@ -28,6 +29,7 @@ function Header({ onClearCurrentUser, type, Panels }) {
     Panels.current[4].style.display = "none";
   };
   const handleAudioRecorderBtnClicked = (e) => {
+    playerRef.current.stopPlayer();
     e.stopPropagation();
     Panels.current[0].style.display = "none";
     Panels.current[1].style.display = "flex";
@@ -36,6 +38,7 @@ function Header({ onClearCurrentUser, type, Panels }) {
     Panels.current[4].style.display = "none";
   };
   const handleUploadBtnClicked = (e) => {
+    playerRef.current.stopPlayer();
     e.stopPropagation();
     Panels.current[2].style.display = "flex";
     Panels.current[0].style.display = "none";
@@ -84,6 +87,7 @@ function Header({ onClearCurrentUser, type, Panels }) {
                   <a
                     href="/#"
                     onClick={(e) => {
+                      playerRef.current.stopPlayer();
                       e.preventDefault();
                       navigate("/");
                     }}
@@ -96,6 +100,7 @@ function Header({ onClearCurrentUser, type, Panels }) {
                 <a
                   href="/#"
                   onClick={(e) => {
+                    playerRef.current.stopPlayer();
                     e.preventDefault();
                     onClearCurrentUser();
                     navigate("/login");

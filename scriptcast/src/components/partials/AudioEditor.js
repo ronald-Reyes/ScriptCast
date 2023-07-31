@@ -8,8 +8,9 @@ import React, {
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { updateAudioThunk } from "../../thunk/thunk";
+import { IoCloseCircleOutline } from "react-icons/io5";
 
-const AudioEditor = forwardRef(({ audioArray, onSubmitEdits }, ref) => {
+const AudioEditor = forwardRef(({ audioArray, onSubmitEdits, Panels }, ref) => {
   const [initialEdits, setInitialEdits] = useState(null);
   const [currentAudioIndex, setCurrentAudioIndex] = useState();
 
@@ -57,10 +58,20 @@ const AudioEditor = forwardRef(({ audioArray, onSubmitEdits }, ref) => {
       });
     }
   };
+  const handleCloseBtn = () => {
+    Panels.current[0].style.display = "none";
+    Panels.current[1].style.display = "none";
+    Panels.current[2].style.display = "none";
+    Panels.current[3].style.display = "none";
+    Panels.current[4].style.display = "none";
+  };
   return (
     <StyledContainer>
       {currentAudioIndex !== null && initialEdits && (
         <form className="AudioEditor" onSubmit={handleSubmit}>
+          <div className="close" onClick={handleCloseBtn}>
+            <IoCloseCircleOutline size={20} color="red" />
+          </div>
           <h2 className="title">Audio {currentAudioIndex}</h2>
           <div>
             <label>Name:</label>
@@ -108,6 +119,11 @@ const StyledContainer = styled.div`
   z-index: 1;
   background: white;
   box-shadow: -1px 5px 5px 5px rgba(128, 128, 128, 0.4);
+  .close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
   .AudioEditor {
     display: flex;
     flex-direction: column;

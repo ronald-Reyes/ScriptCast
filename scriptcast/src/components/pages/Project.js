@@ -36,7 +36,6 @@ function Project({ onUndo, onRedo }) {
 
   useEffect(() => {
     const undoRedoFunction = (event) => {
-      console.log(event.key);
       if ((event.metaKey || event.ctrlKey) && event.key === "z") {
         onUndo();
       }
@@ -111,7 +110,7 @@ function Project({ onUndo, onRedo }) {
       }}
     >
       <div className="TopSection">
-        <Header type={PROJECT_PAGE} Panels={Panels} />
+        <Header type={PROJECT_PAGE} Panels={Panels} playerRef={playerRef} />
         <div
           className="panel TTSContainer"
           ref={(el) => {
@@ -121,7 +120,7 @@ function Project({ onUndo, onRedo }) {
             e.stopPropagation();
           }}
         >
-          <TTS ref={TTSRef} />
+          <TTS ref={TTSRef} Panels={Panels} />
         </div>
         <div
           className="panel RecorderContainer"
@@ -132,7 +131,7 @@ function Project({ onUndo, onRedo }) {
             e.stopPropagation();
           }}
         >
-          <AudioRecorderPanel />
+          <AudioRecorderPanel Panels={Panels} />
         </div>
         <div
           className="panel UploaderContainer"
@@ -143,7 +142,7 @@ function Project({ onUndo, onRedo }) {
             e.stopPropagation();
           }}
         >
-          <UploadFolder />
+          <UploadFolder Panels={Panels} />
         </div>
         <div
           className="panel SceneEditorContainer"
@@ -158,6 +157,7 @@ function Project({ onUndo, onRedo }) {
             ref={SceneEditorRef}
             VideoPreviewer={VideoPreviewer}
             currentSceneIndex={currentSceneIndex}
+            Panels={Panels}
           />
         </div>
         <div
@@ -169,7 +169,7 @@ function Project({ onUndo, onRedo }) {
             e.stopPropagation();
           }}
         >
-          <AudioEditor ref={AudioEditorRef} />
+          <AudioEditor ref={AudioEditorRef} Panels={Panels} />
         </div>
       </div>
       <div className="MainSection">
@@ -184,7 +184,7 @@ function Project({ onUndo, onRedo }) {
         </div>
         <Resizer type="horizontal" />
         <div className="VidePreViewContainer">
-          <VideoPreview ref={VideoPreviewer} />
+          <VideoPreview ref={VideoPreviewer} playerRef={playerRef} />
         </div>
       </div>
       <div className="BottomSection">
@@ -220,6 +220,9 @@ const MainContainer = styled.div`
       display: flex;
       justify-content: center;
       display: none;
+      &.TTSContainer {
+        display: flex;
+      }
       &.SceneEditorContainer {
         justify-content: left;
       }
@@ -252,6 +255,7 @@ const MainContainer = styled.div`
     bottom: 0;
     left: 5%;
     width: 90vw;
+    height: 15%;
     min-height: 10%;
     overflow-y: hidden;
     overflow-x: hidden;

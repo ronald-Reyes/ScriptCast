@@ -38,8 +38,13 @@ const Player = forwardRef(
       stopPlayer,
     }));
 
+    const stopPlayer = () => {
+      stopHighlight();
+      TimeRef.current.timerStop();
+    };
+
     function handlePlayHighlights(startCount, time = 500, lineIndex) {
-      stopPlayer();
+      stopHighlight();
       textEditorRef.current.showLayer1();
       //Removes all marks and hightlights
       const allWords = document.querySelectorAll(
@@ -61,15 +66,16 @@ const Player = forwardRef(
           selectedLineWordElements[count.current - 1].classList.remove(
             "blueHighlight"
           );
+
         count.current++;
         if (count.current >= totalWords) {
-          stopPlayer();
+          stopHighlight();
           count.current = 0;
         }
       }, time / totalWords);
     }
 
-    function stopPlayer() {
+    function stopHighlight() {
       clearInterval(highlightInterval);
       textEditorRef.current.showLayer2();
     }
@@ -82,12 +88,7 @@ const Player = forwardRef(
           handlePlayHighlights={handlePlayHighlights}
         />
         <div className="PlayerBtns">
-          <button
-            onClick={() => {
-              stopPlayer();
-              TimeRef.current.timerStop();
-            }}
-          >
+          <button onClick={stopPlayer}>
             <MdStop size={20} />
           </button>
           <button
@@ -108,6 +109,7 @@ const Player = forwardRef(
           currentSceneIndex={currentSceneIndex}
           SceneEditorRef={SceneEditorRef}
           AudioEditorRef={AudioEditorRef}
+          stopPlayer={stopPlayer}
         />
       </StyledContainer>
     );
@@ -135,6 +137,7 @@ const TimeLine = ({
   SceneEditorRef,
   AudioEditorRef,
   onDeleteClicked,
+  stopPlayer,
 }) => {
   const audioSelected = useRef(null);
   const SceneRef = useRef([]);
@@ -163,6 +166,7 @@ const TimeLine = ({
   };
   //when a scene in the timeline is selected, panel for scene editor will show, and the video preview changes
   const handleSceneSelect = (e, line, i) => {
+    stopPlayer();
     VideoPreviewer.current.handleNextFrame(line.edits);
     e.stopPropagation();
     Panels.current[3].style.display = "flex";
@@ -175,6 +179,7 @@ const TimeLine = ({
   };
   //Whem an audio is selected from timeline, panel will appear
   const handleAudioSelected = (e, i) => {
+    stopPlayer();
     e.stopPropagation();
     Panels.current[3].style.display = "none";
     Panels.current[0].style.display = "none";
@@ -222,16 +227,19 @@ const TimeLine = ({
                 <BsPlayFill
                   onClick={() => {
                     handleClick(audio);
+                    stopPlayer();
                   }}
                 />
                 <BsFillStopFill
                   onClick={() => {
                     handleClick(audio);
+                    stopPlayer();
                   }}
                 />
                 <IoIosRemoveCircleOutline
                   onClick={(e) => {
                     onDeleteClicked(audio._id, i);
+                    stopPlayer();
                   }}
                 />
               </div>
@@ -243,6 +251,7 @@ const TimeLine = ({
           <div
             className="audioStrip"
             onClick={(e) => {
+              stopPlayer();
               e.stopPropagation();
               Panels.current[3].style.display = "none";
               Panels.current[0].style.display = "none";

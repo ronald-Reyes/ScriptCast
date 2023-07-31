@@ -5,8 +5,9 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import { uploadRecordedThunk } from "../../thunk/thunk";
 import { useParams } from "react-router-dom";
+import { IoCloseCircleOutline } from "react-icons/io5";
 
-function AudioRecorderPanel({ onUploadClicked }) {
+function AudioRecorderPanel({ Panels, onUploadClicked }) {
   const params = useParams();
   const fileBlob = React.useRef();
   const recorder = React.useRef();
@@ -42,10 +43,20 @@ function AudioRecorderPanel({ onUploadClicked }) {
     }
     alert("Please Start Recording");
   };
+  const handleCloseBtn = () => {
+    Panels.current[0].style.display = "none";
+    Panels.current[1].style.display = "none";
+    Panels.current[2].style.display = "none";
+    Panels.current[3].style.display = "none";
+    Panels.current[4].style.display = "none";
+  };
 
   return (
     <StyledContainer>
       <div className="Recorder">
+        <div className="close" onClick={handleCloseBtn}>
+          <IoCloseCircleOutline size={20} color="red" />
+        </div>
         <h3 className="title">Recorder Audio</h3>
         <AudioRecorder
           onRecordingComplete={(blob) => handleOutput(blob)}
@@ -71,6 +82,11 @@ const StyledContainer = styled.div`
   z-index: 1;
   background: white;
   box-shadow: -1px 5px 5px 5px rgba(128, 128, 128, 0.4);
+  .close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
   .Recorder {
     display: flex;
     flex-direction: column;
