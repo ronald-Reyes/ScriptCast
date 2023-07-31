@@ -10,7 +10,7 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 
 export const Time = forwardRef(
-  ({ script, audioArray, VideoPreviewer }, ref) => {
+  ({ script, audioArray, VideoPreviewer, handlePlayHighlights }, ref) => {
     const [timeStr, setTimeStr] = useState(["00", "00", "00"]);
     const [time, setTime] = useState(0);
     const stopTime = useRef();
@@ -60,6 +60,9 @@ export const Time = forwardRef(
       let sumTime = 0;
       for (let i = 0; i < script.lines.length; i++) {
         sumTime += script.lines[i].edits.duration / 1000;
+        if (sumTime === timeRef.current) {
+          handlePlayHighlights(0, script.lines[i + 1].edits.duration, i + 1);
+        }
         if (sumTime > timeRef.current) {
           VideoPreviewer.current.handleNextFrame(script.lines[i].edits);
           break;

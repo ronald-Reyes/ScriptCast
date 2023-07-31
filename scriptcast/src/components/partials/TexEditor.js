@@ -1,3 +1,4 @@
+//Code Reviewed
 import React, {
   useEffect,
   useRef,
@@ -21,7 +22,6 @@ import { BiFileBlank } from "react-icons/bi";
 import { IoIosRemoveCircleOutline } from "react-icons/io";
 import { IoIosAddCircle } from "react-icons/io";
 import { SlPencil } from "react-icons/sl";
-import { BsMicMute } from "react-icons/bs";
 import { RiSpeakLine } from "react-icons/ri";
 
 const TextEditor = forwardRef(
@@ -48,65 +48,56 @@ const TextEditor = forwardRef(
     const lineBtns = useRef([]);
     const lineElements = useRef([]);
     const casterElements = useRef([]);
-    const spanTextElements = useRef({});
     const title = useRef();
-
-    const isEditing = useRef(false);
     const Layers = useRef([]);
     const count = wordCounter;
-
     const SST = useRef();
     const isListening = useRef();
     const selectedLineElement = useRef();
     const selectedIndex = useRef();
     const prevText = useRef("");
 
-    useEffect(() => {
-      if (!currentUser) return navigate("/login");
-
-      const projectId = params.projectId;
-      onFetchScript(currentUser._id, projectId);
-    }, []);
-
     useImperativeHandle(ref, () => ({
-      removeAllMarks,
-      removeCurrentHighLight,
+      // removeAllMarks,
+      // removeCurrentHighLight,
       showLayer2,
       showLayer1,
     }));
 
+    //If there is no user yet go back to login page
+    useEffect(() => {
+      if (!currentUser) return navigate("/login");
+      const projectId = params.projectId;
+      onFetchScript(currentUser._id, projectId);
+    }, []);
+
+    //Logic to separate the script line to words
     const WordsSeparator = ({ type, line = "", index }) => {
       const wordsArr = line.split(" ");
       return (
         <div>
           {wordsArr.map((word, i) => (
-            <span
-              className={`textElement ${type}`}
-              ref={(el) => {
-                spanTextElements.current["" + index + i] = el;
-              }}
-              key={i}
-            >
+            <span className={`textElement ${type} line${index}`} key={i}>
               {word + " "}
             </span>
           ))}
         </div>
       );
     };
-    const removeAllMarks = () => {
-      const orderedTextElements = document.querySelectorAll(
-        ".scriptContainer .textElement.Layer2"
-      );
-      orderedTextElements.forEach((element) => {
-        element.classList.remove("mark");
-      });
-    };
-    const removeCurrentHighLight = () => {
-      if (count.current !== 0)
-        document
-          .querySelectorAll(".scriptContainer .textElement.Layer1")
-          [count.current - 1].classList.remove("blueHighlight");
-    };
+    // const removeAllMarks = () => {
+    //   const orderedTextElements = document.querySelectorAll(
+    //     ".scriptContainer .textElement.Layer2"
+    //   );
+    //   orderedTextElements.forEach((element) => {
+    //     element.classList.remove("mark");
+    //   });
+    // };
+    // const removeCurrentHighLight = () => {
+    //   if (count.current !== 0)
+    //     document
+    //       .querySelectorAll(".scriptContainer .textElement.Layer1")
+    //       [count.current - 1].classList.remove("blueHighlight");
+    // };
 
     const showLayer1 = () => {
       Layers.current[0].classList.remove("hide");
@@ -117,6 +108,7 @@ const TextEditor = forwardRef(
       Layers.current[1].classList.remove("hide");
     };
 
+    //Thunks Handler
     const handleUpdateCaster = (newCaster, index) => {
       onCasterUpdate(script._id, newCaster, index);
     };
@@ -227,13 +219,11 @@ const TextEditor = forwardRef(
                         contentEditable="true"
                         suppressContentEditableWarning={true}
                         onFocus={() => {
-                          isEditing.current = true;
                           showLayer2();
                           playerRef.current.stopPlayer();
                           count.current = 0;
                         }}
                         onBlur={() => {
-                          isEditing.current = false;
                           showLayer2();
                           handleUpdateCaster(
                             casterElements.current[i].innerText,
@@ -298,15 +288,12 @@ const TextEditor = forwardRef(
                       suppressContentEditableWarning={true}
                       ref={(el) => (lineElements.current[i] = el)}
                       onFocus={() => {
-                        isEditing.current = true;
                         showLayer2();
 
                         playerRef.current.stopPlayer();
                       }}
                       onBlur={() => {
-                        isEditing.current = false;
                         showLayer2();
-
                         handleUpdateScriptLine(
                           i,
                           lineElements.current[i].innerText

@@ -47,7 +47,7 @@ module.exports.getVideo = async (req, res, next) => {
       res.writeHead(206, head);
       file.pipe(res);
       file.on("end", () => {
-        fs.unlink(`output/${fileName}.mp4`);
+        //fs.unlink(`output/${fileName}.mp4`);
       });
     } else {
       const head = {
@@ -59,7 +59,7 @@ module.exports.getVideo = async (req, res, next) => {
       const readable = fs.createReadStream(`output/${fileName}.mp4`).pipe(res);
       readable.on("end", () => {
         //After the readstream is created, the file will be deleted from the output folder
-        fs.unlink(`output/${fileName}.mp4`);
+        //fs.unlink(`output/${fileName}.mp4`);
       });
     }
   } catch (err) {

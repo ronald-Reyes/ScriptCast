@@ -13,6 +13,13 @@ module.exports.ffmpegCLI = async (
   try {
     if (projectId === undefined) return;
     const { lines } = script;
+    //delete previdous version of video
+    const filenames = await fs.readdir("output");
+    for (let i = 0; i < filenames.length; i++) {
+      if (filenames[i].includes(projectId)) {
+        await fs.unlink(`output/${filenames[i]}`);
+      }
+    }
 
     //create a temp folder
     await fs.mkdir(`./${projectId}`);

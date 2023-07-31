@@ -19,6 +19,7 @@ import Time from "./Time";
 const Player = forwardRef(
   (
     {
+      script,
       textEditorRef,
       wordCounter,
       VideoPreviewer,
@@ -31,70 +32,73 @@ const Player = forwardRef(
     ref
   ) => {
     const count = wordCounter;
-    let myInterval;
+    let highlightInterval;
 
     useImperativeHandle(ref, () => ({
       stopPlayer,
     }));
-    function stopPlayer() {
-      TimeRef.current.timerStop();
-      clearInterval(myInterval);
 
-      textEditorRef.current.showLayer2();
-    }
-    function handlePlayBtn(startCount, time = 500) {
+    function handlePlayHighlights(startCount, time = 500, lineIndex) {
       stopPlayer();
-      TimeRef.current.timerPlay();
-
-      textEditorRef.current.removeAllMarks();
-      textEditorRef.current.removeCurrentHighLight();
       textEditorRef.current.showLayer1();
-
-      const layer1WordElements = document.querySelectorAll(
+      //Removes all marks and hightlights
+      const allWords = document.querySelectorAll(
         ".scriptContainer .textElement.Layer1"
       );
-      const totalWords = layer1WordElements.length;
+      allWords.forEach((element) => {
+        element.classList.remove("mark");
+        element.classList.remove("blueHighlight");
+      });
+      const selectedLineWordElements = document.querySelectorAll(
+        `.scriptContainer .textElement.Layer1.line${lineIndex}`
+      );
+      const totalWords = selectedLineWordElements.length;
       count.current = startCount;
-      //Player has started from 0
 
-      myInterval = setInterval(() => {
-        layer1WordElements[count.current].classList.add("blueHighlight");
+      highlightInterval = setInterval(() => {
+        selectedLineWordElements[count.current].classList.add("blueHighlight");
         if (count.current !== 0)
-          layer1WordElements[count.current - 1].classList.remove(
+          selectedLineWordElements[count.current - 1].classList.remove(
             "blueHighlight"
           );
         count.current++;
         if (count.current >= totalWords) {
-          textEditorRef.current.removeCurrentHighLight();
           stopPlayer();
           count.current = 0;
         }
-      }, time);
+      }, time / totalWords);
+    }
+
+    function stopPlayer() {
+      clearInterval(highlightInterval);
+      textEditorRef.current.showLayer2();
     }
 
     return (
       <StyledContainer>
-        <Time ref={TimeRef} VideoPreviewer={VideoPreviewer} />
+        <Time
+          ref={TimeRef}
+          VideoPreviewer={VideoPreviewer}
+          handlePlayHighlights={handlePlayHighlights}
+        />
         <div className="PlayerBtns">
           <button
             onClick={() => {
               stopPlayer();
+              TimeRef.current.timerStop();
             }}
           >
             <MdStop size={20} />
           </button>
           <button
             onClick={() => {
-              handlePlayBtn(0, 500);
+              handlePlayHighlights(0, script.lines[0].edits.duration, 0);
+              TimeRef.current.timerPlay();
             }}
           >
             <VscDebugStart size={20} />
           </button>
-          <button
-            onClick={() => {
-              handlePlayBtn(wordCounter.current, 500);
-            }}
-          >
+          <button onClick={() => {}}>
             <VscDebugContinueSmall size={20} />
           </button>
         </div>
