@@ -127,7 +127,7 @@ export const Time = forwardRef(
 );
 
 const mapStateToProps = (state) => ({
-  script: state.script,
+  script: state.script.present,
   audioArray: state.audioArray,
 });
 export default connect(mapStateToProps, null, null, {

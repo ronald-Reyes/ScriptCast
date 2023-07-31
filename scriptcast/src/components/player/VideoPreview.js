@@ -103,7 +103,7 @@ const VideoPreview = forwardRef(
   }
 );
 const mapStateToProps = (state) => ({
-  script: state.script,
+  script: state.script.present,
   audioArray: state.audioArray,
 });
 const mapDispatchToProps = (dispatch) => ({

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import TexEditor from "../partials/TexEditor";
 import styled from "styled-components";
 import Header from "../partials/header";
@@ -9,9 +9,11 @@ import AudioRecorderPanel from "../player/AudioRecorder";
 import VideoPreview from "../player/VideoPreview";
 import SceneEditor from "../partials/SceneEditor";
 import AudioEditor from "../partials/AudioEditor";
+import { connect } from "react-redux";
+import { ActionCreators as UndoActionCreators } from "redux-undo";
 export const PROJECT_PAGE = "PROJECT_PAGE";
 
-export default function Project() {
+function Project({ onUndo, onRedo }) {
   const textEditorRef = useRef();
   const playerRef = useRef();
   const SceneEditorRef = useRef();
@@ -31,6 +33,24 @@ export default function Project() {
   let textEditorElem = null;
   let bottomPanelHeight = 0;
   let bottomPanelElem = null;
+
+  useEffect(() => {
+    const undoRedoFunction = (event) => {
+      console.log(event.key);
+      if ((event.metaKey || event.ctrlKey) && event.key === "z") {
+        onUndo();
+      }
+      if ((event.metaKey || event.ctrlKey) && event.key === "Z") {
+        onRedo();
+      }
+    };
+
+    document.addEventListener("keydown", undoRedoFunction);
+    return () => {
+      document.removeEventListener("keydown", undoRedoFunction);
+    };
+  }, [onRedo, onUndo]);
+
   const Resizer = ({ type }) => {
     return (
       <div
@@ -184,6 +204,12 @@ export default function Project() {
     </MainContainer>
   );
 }
+
+const mapDispatchToProps = (dispatch) => ({
+  onUndo: () => dispatch(UndoActionCreators.undo()),
+  onRedo: () => dispatch(UndoActionCreators.redo()),
+});
+export default connect(null, mapDispatchToProps)(Project);
 const MainContainer = styled.div`
   height: 100vh;
   display: grid;

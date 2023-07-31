@@ -70,7 +70,7 @@ function STT({
   );
 }
 const mapStateToProps = (state) => ({
-  script: state.script,
+  script: state.script.present,
 });
 const mapDispatchToProps = (dispatch) => ({
   onUpdateScriptLine: (_id, index, line) =>

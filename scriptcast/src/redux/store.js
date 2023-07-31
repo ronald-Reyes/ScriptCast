@@ -5,9 +5,12 @@ import storage from "redux-persist/lib/storage";
 import autoMergeLevel2 from "redux-persist/es/stateReconciler/autoMergeLevel2";
 import thunk from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
+import undoable from "redux-undo";
 
 const reducers = {
-  script,
+  script: undoable(script, {
+    limit: 10, // set a limit for the size of the history
+  }),
   user,
   projects,
   audioArray,

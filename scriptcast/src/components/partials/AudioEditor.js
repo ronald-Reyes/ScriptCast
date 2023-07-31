@@ -92,7 +92,7 @@ const AudioEditor = forwardRef(({ audioArray, onSubmitEdits }, ref) => {
   );
 });
 const mapStateToProps = (state) => ({
-  script: state.script,
+  script: state.script.present,
   audioArray: state.audioArray,
 });
 const mapDispatchToProps = (dispatch) => ({

@@ -323,7 +323,7 @@ const TextEditor = forwardRef(
 );
 
 const mapStateToProps = (state) => ({
-  script: state.script,
+  script: state.script.present,
   currentUser: state.user.user,
 });
 const mapDispatchToProps = (dispatch) => ({

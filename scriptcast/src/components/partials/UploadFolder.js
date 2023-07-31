@@ -215,7 +215,7 @@ const AudioUploader = ({ onUploadClicked }) => {
 
 const AudioUploaderConnect = connect(
   (state) => ({
-    script: state.script,
+    script: state.script.present,
   }),
   (dispatch) => ({
     onUploadClicked: (projectId, name, bin64) =>
