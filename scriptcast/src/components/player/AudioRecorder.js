@@ -6,6 +6,9 @@ import { connect } from "react-redux";
 import { uploadRecordedThunk } from "../../thunk/thunk";
 import { useParams } from "react-router-dom";
 import { IoCloseCircleOutline } from "react-icons/io5";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { toastOptions } from "../toastify";
 
 function AudioRecorderPanel({ Panels, onUploadClicked }) {
   const params = useParams();
@@ -41,7 +44,7 @@ function AudioRecorderPanel({ Panels, onUploadClicked }) {
       );
       return;
     }
-    alert("Please Start Recording");
+    toast.error("Start Recording First", toastOptions);
   };
   const handleCloseBtn = () => {
     Panels.current[0].style.display = "none";
@@ -68,12 +71,13 @@ function AudioRecorderPanel({ Panels, onUploadClicked }) {
         <audio controls={true} ref={recorder}></audio>
         <button onClick={handleUpload}>Upload</button>
       </div>
+      <ToastContainer />
     </StyledContainer>
   );
 }
 const mapDispatchToProps = (dispatch) => ({
   onUploadClicked: (projectId, name, bin64) =>
-    dispatch(uploadRecordedThunk(projectId, name, bin64)),
+    dispatch(uploadRecordedThunk(projectId, name, bin64, toast)),
 });
 export default connect(null, mapDispatchToProps)(AudioRecorderPanel);
 

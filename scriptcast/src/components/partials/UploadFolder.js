@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import { IoIosRemoveCircleOutline } from "react-icons/io";
 import { BsPlayFill } from "react-icons/bs";
-import { GoSync } from "react-icons/go";
+import { PiRecordFill } from "react-icons/pi";
 import { BsFillStopFill } from "react-icons/bs";
 import {
   fetchAllAudioThunk,
@@ -13,6 +13,9 @@ import {
 } from "../../thunk/thunk";
 import { useParams } from "react-router-dom";
 import { IoCloseCircleOutline } from "react-icons/io5";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { toastOptions } from "../toastify";
 
 //Upload Folder
 function UploadFolder({
@@ -85,14 +88,19 @@ function UploadFolder({
         })}
 
         <div
-          className="Sync"
+          className="recordPointer"
           onClick={() => {
-            onSynchClicked(params.projectId);
+            Panels.current[0].style.display = "none";
+            Panels.current[1].style.display = "flex";
+            Panels.current[2].style.display = "none";
+            Panels.current[3].style.display = "none";
+            Panels.current[4].style.display = "none";
           }}
         >
-          <GoSync /> Please Sync Manually to Database
+          Or Record Audio <PiRecordFill />
         </div>
       </div>
+      <ToastContainer />
     </StyledContainer>
   );
 }
@@ -102,7 +110,8 @@ const mapStateToProps = (state) => ({
 });
 const mapDispatchToProps = (dispatch) => ({
   onSynchClicked: (projectId) => dispatch(fetchAllAudioThunk(projectId)),
-  onDeleteClicked: (_id, index) => dispatch(deleteAudioThunk(_id, index)),
+  onDeleteClicked: (_id, index) =>
+    dispatch(deleteAudioThunk(_id, index, toast)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(UploadFolder);
 
@@ -135,7 +144,7 @@ const StyledContainer = styled.div`
     margin-top: 10px;
     cursor: pointer;
   }
-  .Sync {
+  .recordPointer {
     text-align: center;
     margin: 20px;
     cursor: pointer;
@@ -171,10 +180,13 @@ const AudioUploader = ({ onUploadClicked }) => {
     if (e.target.files[0]) {
       console.log(e.target.files[0]);
       if (e.target.files[0].type !== "audio/mpeg") {
-        return alert("The loaded file is not an audio");
+        return toast.error("The loaded file is not an audio", toastOptions);
       }
       if (e.target.files[0].size > 10000000) {
-        return alert("The loaded file is greater than 10MB");
+        return toast.error(
+          "The loaded file is greater than 10mb",
+          toastOptions
+        );
       }
       setAudio({
         name: e.target.files[0].name,
@@ -195,7 +207,7 @@ const AudioUploader = ({ onUploadClicked }) => {
 
       return;
     }
-    alert("Choose A File First");
+    toast.error("Upload an audio first", toastOptions);
   };
 
   //Setting temporary audio variable
@@ -235,6 +247,6 @@ const AudioUploaderConnect = connect(
   }),
   (dispatch) => ({
     onUploadClicked: (projectId, name, bin64) =>
-      dispatch(uploadAudioThunk(projectId, name, bin64)),
+      dispatch(uploadAudioThunk(projectId, name, bin64, toast)),
   })
 )(AudioUploader);

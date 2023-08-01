@@ -9,6 +9,9 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import { updateAudioThunk } from "../../thunk/thunk";
 import { IoCloseCircleOutline } from "react-icons/io5";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { toastOptions } from "../toastify";
 
 const AudioEditor = forwardRef(({ audioArray, onSubmitEdits, Panels }, ref) => {
   const [initialEdits, setInitialEdits] = useState(null);
@@ -99,6 +102,7 @@ const AudioEditor = forwardRef(({ audioArray, onSubmitEdits, Panels }, ref) => {
           <button type="Submit">Save</button>
         </form>
       )}
+      <ToastContainer />
     </StyledContainer>
   );
 });
@@ -108,7 +112,7 @@ const mapStateToProps = (state) => ({
 });
 const mapDispatchToProps = (dispatch) => ({
   onSubmitEdits: (_id, index, audio) =>
-    dispatch(updateAudioThunk(_id, index, audio)),
+    dispatch(updateAudioThunk(_id, index, audio, toast)),
 });
 export default connect(mapStateToProps, mapDispatchToProps, null, {
   forwardRef: true,

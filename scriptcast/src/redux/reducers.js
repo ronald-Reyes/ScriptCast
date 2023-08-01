@@ -30,7 +30,7 @@ export const user = (state = {}, action) => {
   switch (type) {
     case SET_CURRENT_USER: {
       const { user } = payload;
-      alert("Susccesfully Logged-in");
+      //alert("Susccesfully Logged-in");
       return { ...state, user: user };
     }
     case REGISTER_USER: {

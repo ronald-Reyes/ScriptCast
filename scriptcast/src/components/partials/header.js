@@ -15,6 +15,9 @@ import styled from "styled-components";
 import { DASHBOARD_PAGE } from "../pages/Dashboard";
 import { PROJECT_PAGE } from "../pages/Project";
 import { renderVideoThunk } from "../../thunk/thunk";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { toastOptions } from "../toastify";
 
 function Header({
   onClearCurrentUser,
@@ -97,6 +100,11 @@ function Header({
                 <button
                   className="PublishBtn"
                   onClick={() => {
+                    if (audioArray.length === 0 || script.lines.length === 0)
+                      return toast.error(
+                        "Please add at least one scene and one audio track",
+                        toastOptions
+                      );
                     playerRef.current.stopPlayer();
                     onDownloadClicked(
                       rawImagesRef.current,
@@ -143,6 +151,7 @@ function Header({
           </nav>
         </div>
       </header>
+      <ToastContainer />
     </StyledContainer>
   );
 }

@@ -62,6 +62,9 @@ const TextEditor = forwardRef(
       // removeCurrentHighLight,
       showLayer2,
       showLayer1,
+      handleDeleteLine,
+      handleAddLineToLast,
+      handeInsertLine,
     }));
 
     //If there is no user yet go back to login page

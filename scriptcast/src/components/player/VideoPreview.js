@@ -13,6 +13,9 @@ import { FaImages } from "react-icons/fa";
 import { IoIosSave } from "react-icons/io";
 import { renderVideoThunk } from "../../thunk/thunk";
 import { useNavigate, useParams } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { toastOptions } from "../toastify";
 const MAIN_CANVAS = "MAIN_CANVAS";
 const RAW_FOLDER_CANVAS = "RAW_FOLDER_CANVAS";
 
@@ -202,6 +205,11 @@ const RawFolder = forwardRef(
           </div>
           <div
             onClick={() => {
+              if (audioArray.length === 0 || script.lines.length === 0)
+                return toast.error(
+                  "Please add at least one scene and one audio track",
+                  toastOptions
+                );
               playerRef.current.stopPlayer();
               onDownloadClicked(
                 rawImages,
@@ -226,6 +234,7 @@ const RawFolder = forwardRef(
           </div>
           <div className="SpaceBottom"></div>
         </RawFolderStyled>
+        <ToastContainer />
       </div>
     );
   }

@@ -19,26 +19,29 @@ import {
   updateEdits,
   updateAudio,
 } from "../redux/actions";
+import { toastOptions } from "../components/toastify";
 
-export const setUser = (email, password) => async (dispatch, getState) => {
-  try {
-    const body = JSON.stringify({ email: email, password: password });
-    const response = await fetch("http://localhost:5000/api/user/login", {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "post",
-      body,
-    });
-    const res = await response.json();
-    if (res.status === true) {
-      return dispatch(setCurrentUser(res.user));
+export const setUser =
+  (email, password, navigate) => async (dispatch, getState) => {
+    try {
+      const body = JSON.stringify({ email: email, password: password });
+      const response = await fetch("http://localhost:5000/api/user/login", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "post",
+        body,
+      });
+      const res = await response.json();
+      if (res.status === true) {
+        navigate("/");
+        return dispatch(setCurrentUser(res.user));
+      }
+      alert(res.msg);
+    } catch (e) {
+      dispatch();
     }
-    alert(res.msg);
-  } catch (e) {
-    dispatch();
-  }
-};
+  };
 
 export const createUser =
   (username, email, password) => async (dispatch, getState) => {
@@ -348,7 +351,7 @@ async function audioToBase64(e) {
   });
 }
 export const uploadAudioThunk =
-  (projectId, name, file) => async (dispatch, getState) => {
+  (projectId, name, file, toast) => async (dispatch, getState) => {
     try {
       const bin64 = await audioToBase64(file);
       const formData = new FormData();
@@ -362,7 +365,7 @@ export const uploadAudioThunk =
       });
       const res = await response.json();
       if (res.status === true) {
-        alert("Successfully added to database.");
+        toast.success("Successfully Uploaded", toastOptions);
         dispatch(uploadAudio(res.audioCreated));
       }
     } catch (e) {
@@ -380,7 +383,7 @@ const blobToBase64 = (blob) => {
   });
 };
 export const uploadRecordedThunk =
-  (projectId, name, file) => async (dispatch, getState) => {
+  (projectId, name, file, toast) => async (dispatch, getState) => {
     try {
       const bin64 = await blobToBase64(file);
       const formData = new FormData();
@@ -394,7 +397,7 @@ export const uploadRecordedThunk =
       });
       const res = await response.json();
       if (res.status === true) {
-        alert("Successfully added to database.");
+        toast.success("Successfully Uploaded", toastOptions);
         dispatch(uploadAudio(res.audioCreated));
       }
     } catch (e) {
@@ -420,28 +423,29 @@ export const fetchAllAudioThunk = (projectId) => async (dispatch, getState) => {
   }
 };
 
-export const deleteAudioThunk = (_id, index) => async (dispatch, getState) => {
-  try {
-    const body = JSON.stringify({ _id });
-    const response = await fetch(`http://localhost:5000/api/audio/remove`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body,
-    });
-    const res = await response.json();
-    if (res.status === true) {
-      alert("Successfully deleted from database.");
-      dispatch(deleteAudio(index));
+export const deleteAudioThunk =
+  (_id, index, toast) => async (dispatch, getState) => {
+    try {
+      const body = JSON.stringify({ _id });
+      const response = await fetch(`http://localhost:5000/api/audio/remove`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body,
+      });
+      const res = await response.json();
+      if (res.status === true) {
+        toast.success("Successfully deleted from database", toastOptions);
+        dispatch(deleteAudio(index));
+      }
+    } catch (e) {
+      dispatch();
     }
-  } catch (e) {
-    dispatch();
-  }
-};
+  };
 
 export const updateAudioThunk =
-  (_id, index, audio) => async (dispatch, getState) => {
+  (_id, index, audio, toast) => async (dispatch, getState) => {
     try {
       const body = JSON.stringify({ _id, audio });
       const response = await fetch(
@@ -456,7 +460,7 @@ export const updateAudioThunk =
       );
       const res = await response.json();
       if (res.status === true) {
-        alert("Successfully updated from database.");
+        toast.success("Successfully updated from database", toastOptions);
         dispatch(updateAudio(index, audio));
       }
     } catch (e) {

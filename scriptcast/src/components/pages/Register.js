@@ -7,6 +7,7 @@ import { registerValidator } from "../../inputValidator/inputValidator";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import logo from "../../images/ScriptCastLogo.png";
+import { toastOptions } from "../toastify";
 
 function Register({ onRegisterPressed, currentUser }) {
   const navigate = useNavigate();
@@ -16,12 +17,7 @@ function Register({ onRegisterPressed, currentUser }) {
     password: "",
     confirmPassword: "",
   });
-  const toastOptions = {
-    position: "bottom-right",
-    autoClose: 3000,
-    draggable: true,
-    theme: "colored",
-  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const status = registerValidator(userCredetials);

@@ -11,10 +11,14 @@ import { VscDebugStart, VscDebugContinueSmall } from "react-icons/vsc";
 import { MdStop } from "react-icons/md";
 import { IoIosAdd } from "react-icons/io";
 import { IoIosRemoveCircleOutline } from "react-icons/io";
+import { IoIosAddCircle } from "react-icons/io";
 import { BsPlayFill } from "react-icons/bs";
 import { BsFillStopFill } from "react-icons/bs";
 import { deleteAudioThunk } from "../../thunk/thunk";
 import Time from "./Time";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { toastOptions } from "../toastify";
 
 const Player = forwardRef(
   (
@@ -110,6 +114,7 @@ const Player = forwardRef(
           SceneEditorRef={SceneEditorRef}
           AudioEditorRef={AudioEditorRef}
           stopPlayer={stopPlayer}
+          textEditorRef={textEditorRef}
         />
       </StyledContainer>
     );
@@ -121,7 +126,8 @@ const mapStateToProps = (state) => ({
   audioArray: state.audioArray,
 });
 const mapDispatchToProps = (dispatch) => ({
-  onDeleteClicked: (_id, index) => dispatch(deleteAudioThunk(_id, index)),
+  onDeleteClicked: (_id, index) =>
+    dispatch(deleteAudioThunk(_id, index, toast)),
 });
 export default connect(mapStateToProps, null, null, {
   forwardRef: true,
@@ -135,6 +141,7 @@ const TimeLine = ({
   Panels,
   currentSceneIndex,
   SceneEditorRef,
+  textEditorRef,
   AudioEditorRef,
   onDeleteClicked,
   stopPlayer,
@@ -207,9 +214,42 @@ const TimeLine = ({
                 handleSceneSelect(e, line, i);
               }}
             >
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <IoIosAddCircle
+                  size={20}
+                  color="blue"
+                  opacity={0.8}
+                  onClick={() => {
+                    textEditorRef.current.handeInsertLine(i);
+                  }}
+                />
+
+                <IoIosRemoveCircleOutline
+                  size={20}
+                  color="black"
+                  opacity={0.8}
+                  onClick={() => {
+                    textEditorRef.current.handleDeleteLine(i);
+                  }}
+                />
+              </div>
               <span>{Math.round(line.edits.duration / 1000)} sec</span>
             </div>
           ))}
+          <div
+            className="lineStrip"
+            onClick={(e) => {
+              stopPlayer();
+              e.stopPropagation();
+              textEditorRef.current.handleAddLineToLast();
+            }}
+          >
+            <IoIosAdd size={30} />
+          </div>
         </section>
         <section className="audioStrips">
           <span>
@@ -223,7 +263,11 @@ const TimeLine = ({
                 handleAudioSelected(e, i);
               }}
             >
-              <div>
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
                 <BsPlayFill
                   onClick={() => {
                     handleClick(audio);
@@ -265,6 +309,7 @@ const TimeLine = ({
         </section>
         <section className="newStrip"></section>
       </div>
+      <ToastContainer />
     </StripContainer>
   );
 };
@@ -318,6 +363,16 @@ const StripContainer = styled.div`
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        &:last-child {
+          border: none;
+          min-width: 50px;
+          max-width: 50px;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+          background: transparent;
+        }
       }
     }
     .audioStrips {

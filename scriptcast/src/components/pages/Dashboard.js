@@ -14,6 +14,9 @@ import { VscDiffAdded } from "react-icons/vsc";
 import { IoOptionsOutline } from "react-icons/io5";
 import { GrAdd } from "react-icons/gr";
 import moment from "moment";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { toastOptions } from "../toastify";
 
 const CREATE_PROJECT = "CREATE PROJECT";
 const UPDATE_PROJECT = "UPDATE PROJECT";
@@ -33,6 +36,10 @@ export function Dashboard({
 
   useEffect(() => {
     if (!currentUser) return navigate("/login");
+
+    if (currentUser) {
+      toast.success(`Welcome ${currentUser.username}`, toastOptions);
+    }
     onFetchAllProjects(currentUser._id);
   }, []);
 

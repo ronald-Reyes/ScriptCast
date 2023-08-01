@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { loginValidator } from "../../inputValidator/inputValidator";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { toastOptions } from "../toastify";
 import logo from "../../images/ScriptCastLogo.png";
 function Login({ onLoginPressed, currentUser }) {
   const navigate = useNavigate();
@@ -13,12 +14,7 @@ function Login({ onLoginPressed, currentUser }) {
     email: "",
     password: "",
   });
-  const toastOptions = {
-    position: "bottom-right",
-    autoClose: 3000,
-    draggable: true,
-    theme: "colored",
-  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const status = loginValidator(userCredetials);
@@ -26,11 +22,9 @@ function Login({ onLoginPressed, currentUser }) {
       toast.error(status, toastOptions);
       return;
     }
-    onLoginPressed(userCredetials);
+    onLoginPressed(userCredetials, navigate);
   };
-  useEffect(() => {
-    if (currentUser) navigate("/");
-  }, [currentUser]);
+
   return (
     <>
       <StyledContainer>
@@ -90,7 +84,8 @@ const mapStateToProps = (state) => ({
   currentUser: state.user.user,
 });
 const mapDispatchToProps = (dispatch) => ({
-  onLoginPressed: ({ email, password }) => dispatch(setUser(email, password)),
+  onLoginPressed: ({ email, password }, navigate) =>
+    dispatch(setUser(email, password, navigate)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
 
