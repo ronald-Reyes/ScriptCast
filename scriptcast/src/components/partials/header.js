@@ -138,7 +138,7 @@ function Header({
                 <a
                   href="/#"
                   onClick={(e) => {
-                    playerRef.current.stopPlayer();
+                    if (playerRef) playerRef.current.stopPlayer();
                     e.preventDefault();
                     onClearCurrentUser();
                     navigate("/login");

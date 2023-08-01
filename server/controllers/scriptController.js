@@ -16,6 +16,22 @@ module.exports.updateLine = async (req, res, next) => {
     return res.json({ status: false, msg: err.message });
   }
 };
+module.exports.undoRedo = async (req, res, next) => {
+  try {
+    const { _id, script } = req.body;
+
+    const updatedScript = await ScriptModel.updateOne(
+      {
+        _id,
+      },
+      { $set: { ...script } }
+    );
+    if (updatedScript) return res.json({ status: true, updatedScript });
+  } catch (err) {
+    //Error Handling passed to the frontend
+    return res.json({ status: false, msg: err.message });
+  }
+};
 module.exports.updateEdits = async (req, res, next) => {
   try {
     const { line, index, _id } = req.body;

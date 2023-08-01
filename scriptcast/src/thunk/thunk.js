@@ -339,7 +339,25 @@ export const updateScriptTitleThunk =
       dispatch();
     }
   };
-
+export const undoRedoThunk = (_id, script) => async (dispatch, getState) => {
+  try {
+    const body = JSON.stringify({
+      _id: getState().script.present._id,
+      script: getState().script.present,
+    });
+    const response = await fetch(`http://localhost:5000/api/script/undo-redo`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "post",
+      body,
+    });
+    // const res = await response.json();
+    // if (res.status === true) console.log(res.updatedScript);
+  } catch (e) {
+    dispatch();
+  }
+};
 //Audio Thunks
 
 async function audioToBase64(e) {

@@ -11,9 +11,13 @@ import SceneEditor from "../partials/SceneEditor";
 import AudioEditor from "../partials/AudioEditor";
 import { connect } from "react-redux";
 import { ActionCreators as UndoActionCreators } from "redux-undo";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { toastOptions } from "../toastify";
+import { undoRedoThunk } from "../../thunk/thunk";
 export const PROJECT_PAGE = "PROJECT_PAGE";
 
-function Project({ onUndo, onRedo }) {
+function Project({ onUndo, onRedo, script, undoRedo }) {
   const textEditorRef = useRef();
   const playerRef = useRef();
   const SceneEditorRef = useRef();
@@ -36,12 +40,21 @@ function Project({ onUndo, onRedo }) {
   let bottomPanelElem = null;
 
   useEffect(() => {
+    const saveToDb = (type) => {
+      toast.info(type, {
+        ...toastOptions,
+        autoClose: 500,
+      });
+      undoRedo();
+    };
     const undoRedoFunction = (event) => {
       if ((event.metaKey || event.ctrlKey) && event.key === "z") {
         onUndo();
+        saveToDb("Undo");
       }
       if ((event.metaKey || event.ctrlKey) && event.key === "Z") {
         onRedo();
+        saveToDb("Redo");
       }
     };
 
@@ -211,15 +224,19 @@ function Project({ onUndo, onRedo }) {
           TimeRef={TimeRef}
         />
       </div>
+      <ToastContainer />
     </MainContainer>
   );
 }
-
+const mapStateToProps = (state) => ({
+  script: state.script.present,
+});
 const mapDispatchToProps = (dispatch) => ({
   onUndo: () => dispatch(UndoActionCreators.undo()),
   onRedo: () => dispatch(UndoActionCreators.redo()),
+  undoRedo: () => dispatch(undoRedoThunk()),
 });
-export default connect(null, mapDispatchToProps)(Project);
+export default connect(mapStateToProps, mapDispatchToProps)(Project);
 const MainContainer = styled.div`
   height: 100vh;
   display: grid;
