@@ -304,12 +304,13 @@ const TextEditor = forwardRef(
                         );
                       }}
                     >
-                      <WordsSeparator
+                      {item.line}
+                      {/* <WordsSeparator
                         key={i}
                         line={item.line}
                         index={i}
                         type="Layer2"
-                      />
+                      /> */}
                     </div>
                   </div>
                 ))}

@@ -97,6 +97,8 @@ const Player = forwardRef(
           </button>
           <button
             onClick={() => {
+              if (script.lines.length === 0)
+                return toast.error("No Scenes To Play", toastOptions);
               handlePlayHighlights(0, script.lines[0].edits.duration, 0);
               TimeRef.current.timerPlay();
             }}
