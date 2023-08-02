@@ -32,8 +32,9 @@ function STT({
   //Appends the line text with the transcript text
   useEffect(() => {
     if (selected.current) {
-      selected.current.firstChild.innerText =
-        prevText.current + " " + transcript;
+      // selected.current.firstChild.innerText =
+      //   prevText.current + " " + transcript;
+      selected.current.innerText = prevText.current + " " + transcript;
     }
   }, [transcript]);
 
