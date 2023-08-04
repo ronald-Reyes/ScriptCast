@@ -7,6 +7,7 @@ const scriptRoutes = require("./routes/scriptRoutes");
 const audioRoutes = require("./routes/audioRoutes");
 const videoRoutes = require("./routes/videoRoutes");
 const multer = require("multer");
+const path = require("path");
 require("dotenv").config();
 
 const app = express();
@@ -17,11 +18,18 @@ const upload = multer({
 });
 app.use(upload.array());
 
+//Serve the react app and its files with the same port as the server
+app.use(express.static(path.resolve(__dirname, "../scriptcast/build")));
+
 app.use("/api/user", userRoutes);
 app.use("/api/project", projectRoutes);
 app.use("/api/script", scriptRoutes);
 app.use("/api/audio", audioRoutes);
 app.use("/api/video", videoRoutes);
+
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "../scriptcast/build", "index.html"));
+});
 
 //catch no matched route
 app.use((req, res, next) => {
