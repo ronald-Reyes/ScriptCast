@@ -1,64 +1,17 @@
-Updates
+About
+    Similar to descript, scriptcast is an app that lets user create simple videos, do transcription and TTS, 
+    record and save audio, and lastly download the generated video
 
-1.  Created a server with user API endpoints, specifically has user routes, user model,
-    and user controller to add and retrieve user from mongoDB
+To run the code locally,
 
-        In Postman,
+Requirements
+1. NodeJS 
+2. FFMPEG
 
-    Tests:
-
-        POST : localhost:3000/api/user/login
-
-        body : {
-            "email":"tmq.ronald.r@gmail.com",
-            "password":"12345"
-        }
-
-
-        POST : localhost:3000/api/user/register
-
-        body : {
-            "username":"Sample"
-            "email":"sample@gmail.com",
-            "password":"pass"
-        }
-
-    Error Handling Tests:
-
-        POST : localhost:3000/api/user/login
-
-            body : {
-                "email":"any@gmail.com",
-                "password":"12345"
-            }
-        POST : localhost:3000/api/user/register
-
-            body : {
-                "username":"a"
-                "email":"sample@gmail.com",
-                "password":"pass"
-            }
-        POST : localhost:3000/api/user/anyRoute
-
-2.  Initial Setup of React, Redux, and Thunk
-
-        - Here I created the first setup of redux and handled the store for the user-information
-
-        - I also separated the side effects (using redux-thunks) when data is fetched from the server
+Run the ff. commands from ScriptCast Folder
+1. npm run build
+2. npm run start / npm run build
+3. open at localhost:5000
 
 
-        Actions Created, with their corresponding reducers
-            1. REGISTER_USER
-            2. SET_CURRENT_USSER
 
-3.  UI was made and connect all the logic og login and register APIs,
-
-    - Here, I successfully created the login, and register pages
-
-4.  Here the updates involve the initial dasboard page that can retrieve projects collection from the database,
-    Also the initial algorithm for words highlighting and its react component are added
-
-    - Additional actions are also added to redux-thunk
-
-5.  Here the updates include creating react component for dashboard page, with redux, and CRUD operations for
-    projects collection.
